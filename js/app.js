@@ -1,12 +1,12 @@
 /*
- * Create a list that holds all of your cards
+ * 1. Create a list that holds all of your cards
  */
 const deck = document.getElementById("main-deck");
 const numCards = 16;
 let cards = new Array(numCards);
 
 /*
- * Display the cards on the page
+ * 2. Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
@@ -45,24 +45,33 @@ for(let i = 0; i < numCards; i++){
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
-// list to store open cards
-let openCards = new Array(2);
+// list to store all currently matched cards
+let openCards = new Array(0);
+
+// list to store the open card pending checks
+let matchedCards = new Array();
 
 // create the method to run when clicked
 const handleClick = function(event){
     let card = event.target;
-    // skip and return if event target is not li
+    // skip and return if event target is not li or 
+    // if it is already open
+    // if it is already matched
     if (card.nodeName.toLowerCase() !== 'li') return;
+    if (openCards.includes(card))             return;
+    if (matchedCards.includes(card))          return;
 
-    // set the event target class to "open show"
+    // show the card
     showCard(card);
 
     // add card to the list of open cards
-    if (openCards.includes(card)){
-        console.log('contains card in stack');
-    }else{
-        console.log('no match found in open stack');
-        openCards.push(card);
+    addCardToCheckList(card);
+
+    // end game is reached if matched card is at numCards
+    if (matchedCards.length === numCards){
+        // TODO win state
+        // show message
+        // reset game
     }
 };
 
@@ -80,7 +89,35 @@ function showCard(card){
 }
 
 /**
- * function to hide the card
+ * function to add card to open list.
+ */
+function addCardToCheckList(card){
+    openCards.push(card);
+    console.log("pushed card(), current size: " + openCards.length);
+
+    if(openCards.length === 2){
+        let firstCard = openCards[0];
+        let secondCard = openCards[1];
+        if (firstCard.isEqualNode(secondCard)){
+            // card match, add them to matched cards stack
+            console.log("matched!");
+            matchCard(firstCard);
+            matchCard(secondCard);
+            matchedCards.push(firstCard);
+            matchedCards.push(secondCard);
+        }else{
+            // card mismatch
+            console.log("mismatch");
+            hideCard(firstCard);
+            hideCard(secondCard);
+        }
+        // reset the open cards
+        openCards = new Array();
+    }
+}
+
+/**
+ * function to hide the card 
  * @param {*} card 
  */
 function hideCard(card){
@@ -89,13 +126,11 @@ function hideCard(card){
 } 
 
 /**
- * Overloaded version of show card
+ * function to show the card is matched
+ * @param {*} card 
  */
-function showCard(card, isMatch){
-    if (isMatch){
-        hideCard(card);
-        card.classList.add("match");
-    }else{
-        showCard(card);
-    }
+function matchCard(card){
+    card.classList.remove("open");
+    card.classList.remove("show");
+    card.classList.add("match");
 }
