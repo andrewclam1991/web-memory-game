@@ -63,9 +63,7 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-// delegate click event to each child li element
-const deck = document.getElementById('main-deck');
-deck.addEventListener('click', handleClick);
+
 
 // list to store all currently matched cards
 let openCards = new Array(0);
@@ -97,6 +95,10 @@ const handleClick = function (event) {
         console.log("win game!");
     }
 };
+
+// delegate click event to each child li element
+const deck = document.getElementById('main-deck');
+deck.addEventListener('click', handleClick);
 
 /**
  * function to show the card
