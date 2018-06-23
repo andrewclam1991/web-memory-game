@@ -11,6 +11,9 @@ const NUM_CARDS = 16;
  */
 initGame();
 
+// TODO test
+// showGameWonModal();
+
 /**
  * Function that initializes the memory game
  * responsible for shuffling the cards and generate the 
@@ -90,9 +93,7 @@ const handleClick = function (event) {
     // end game is reached if matched card is at numCards
     if (matchedCards.length === NUM_CARDS) {
         // TODO win state
-        // show message
-        // reset game
-        console.log("win game!");
+        showGameWonModal();
     }
 };
 
@@ -131,6 +132,7 @@ function addCardToCheckList(card) {
         } else {
             // card mismatch
             console.log("mismatch");
+            // TODO show when mismatch
             hideCard(firstCard);
             hideCard(secondCard);
         }
@@ -156,4 +158,28 @@ function matchCard(card) {
     card.classList.remove("open");
     card.classList.remove("show");
     card.classList.add("match");
+}
+
+/**
+ * Function to show user has won the game
+ * and allows user to reset the game
+ */
+function showGameWonModal(){
+    let modal = document.querySelector("#modal-game-win");
+    let modalClose = document.getElementsByClassName("close")[0];
+    modal.style.display = "block";
+
+    // Allows user to dimiss the modal message
+    modalClose.onclick = function(){
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    console.log("win game!");
 }
