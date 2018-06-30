@@ -3,6 +3,13 @@
  */
 const NUM_CARDS = 16;
 
+// list to store all currently matched cards
+let openCards = new Array(0);
+
+// list to store the open card pending checks
+let matchedCards = new Array(0);
+
+
 /*
  * 2. Display the cards on the page
  *   - shuffle the list of cards content using the provided "shuffle" method below
@@ -13,6 +20,10 @@ initGame();
 
 // TODO test
 // showGameWonModal();
+
+// Allow player to reset game
+let resetGameBtn = document.querySelector(".restart");
+resetGameBtn.addEventListener('click',initGame);
 
 /**
  * Function that initializes the memory game
@@ -35,7 +46,14 @@ function initGame(){
     cardContents = shuffle(cardContents);
     for (let j = 0; j < cards.length; j++) {
         cards[j].appendChild(cardContents[j]);
+        hideCard(cards[j]);
     }
+
+    // reset open cards
+    openCards = new Array(0);
+
+    // reset match cards
+    matchedCards = new Array(0);
 }
 
 /**
@@ -66,13 +84,6 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-
-
-// list to store all currently matched cards
-let openCards = new Array(0);
-
-// list to store the open card pending checks
-let matchedCards = new Array(0);
 
 // create the method to run when clicked
 const handleClick = function (event) {
@@ -146,6 +157,7 @@ function addCardToCheckList(card) {
  * @param {Node} card to be hidden
  */
 function hideCard(card) {
+    card.classList.remove("match");
     card.classList.remove("open");
     card.classList.remove("show");
 }
