@@ -1,21 +1,49 @@
 /*
- * Create a list that holds all of your cards
- * Test commit
+ * 1. Create a list that holds all of your cards
  */
-const deck = document.getElementById("main-deck");
-const numCards = 16;
-let cards = new Array(numCards);
+const NUM_CARDS = 16;
 
 /*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
+ * 2. Display the cards on the page
+ *   - shuffle the list of cards content using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
+initGame();
 
-// Shuffle function from http://stackoverflow.com/a/2450976
+// TODO test
+// showGameWonModal();
+
+/**
+ * Function that initializes the memory game
+ * responsible for shuffling the cards and generate the 
+ * game baord.
+ */
+function initGame(){
+    // get the list of existing cards
+    let cards = new Array(NUM_CARDS);
+    cards = document.getElementsByClassName("card");
+    
+    // Creates a list to store each cards' content
+    let cardContents = new Array();
+    for(let i = 0; i < cards.length; i++){
+        let cardContent = cards[i].getElementsByTagName("i")[0];
+        cardContents.push(cardContent);
+    }   
+
+    // shuffle the card contents
+    cardContents = shuffle(cardContents);
+    for (let j = 0; j < cards.length; j++) {
+        cards[j].appendChild(cardContents[j]);
+    }
+}
+
+/**
+ * Function the handles shuffling an array
+ * a function from http://stackoverflow.com/a/2450976
+ */
 function shuffle(array) {
-    let currentIndex = array.length; 
+    let currentIndex = array.length;
     let temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
@@ -25,18 +53,11 @@ function shuffle(array) {
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
 
-cards = document.getElementsByClassName("card");
-cards = shuffle(cards);
-for(let i = 0; i < numCards; i++){
-    deck.appendChild(cards[i]);
-}
-
 /*
- * set up the event listener for a card. If a card is clicked:
+ * 3. set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
  *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
@@ -46,57 +67,119 @@ for(let i = 0; i < numCards; i++){
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
-// list to store open cards
-let openCards = new Array(2);
+
+// list to store all currently matched cards
+let openCards = new Array(0);
+
+// list to store the open card pending checks
+let matchedCards = new Array(0);
 
 // create the method to run when clicked
-const handleClick = function(event){
+const handleClick = function (event) {
     let card = event.target;
-    // skip and return if event target is not li
+    // skip and return if event target is not li or 
+    // if it is already open
+    // if it is already matched
     if (card.nodeName.toLowerCase() !== 'li') return;
+    if (openCards.includes(card)) return;
+    if (matchedCards.includes(card)) return;
 
-    // set the event target class to "open show"
+    // show the card
     showCard(card);
 
     // add card to the list of open cards
-    if (openCards.includes(card)){
-        console.log('contains card in stack');
-    }else{
-        console.log('no match found in open stack');
-        openCards.push(card);
+    addCardToCheckList(card);
+
+    // end game is reached if matched card is at numCards
+    if (matchedCards.length === NUM_CARDS) {
+        // TODO win state
+        showGameWonModal();
     }
 };
 
 // delegate click event to each child li element
-// const deck = document.getElementById('main-deck');
-deck.addEventListener('click',handleClick);
+const deck = document.getElementById('main-deck');
+deck.addEventListener('click', handleClick);
 
 /**
  * function to show the card
- * @param {*} card 
+ * @param {Node} card to be shown
  */
-function showCard(card){
+function showCard(card) {
     card.classList.add("open");
     card.classList.add("show");
 }
 
 /**
- * function to hide the card
- * @param {*} card 
+ * function to add card to open list.
+ * @param {Node} card to be added and checked
  */
-function hideCard(card){
-    card.classList.remove("open");
-    card.classList.remove("show");
-} 
+function addCardToCheckList(card) {
+    openCards.push(card);
+    console.log("pushed card(), current size: " + openCards.length);
+
+    if (openCards.length === 2) {
+        // open cards stack has two cards now, check if matches
+        let firstCard = openCards[0];
+        let secondCard = openCards[1];
+        if (firstCard.isEqualNode(secondCard)) {
+            // card match, add them to matched cards stack
+            console.log("matched!");
+            matchCard(firstCard);
+            matchCard(secondCard);
+            matchedCards.push(firstCard);
+            matchedCards.push(secondCard);
+        } else {
+            // card mismatch
+            console.log("mismatch");
+            // TODO show when mismatch
+            hideCard(firstCard);
+            hideCard(secondCard);
+        }
+        // clear the open card stack
+        openCards = new Array();
+    }
+}
 
 /**
- * Overloaded version of show card
+ * function to hide the card 
+ * @param {Node} card to be hidden
  */
-function showCard(card, isMatch){
-    if (isMatch){
-        hideCard(card);
-        card.classList.add("match");
-    }else{
-        showCard(card);
+function hideCard(card) {
+    card.classList.remove("open");
+    card.classList.remove("show");
+}
+
+/**
+ * function to show the card is matched
+ * @param {Node} card to mark as matched
+ */
+function matchCard(card) {
+    card.classList.remove("open");
+    card.classList.remove("show");
+    card.classList.add("match");
+}
+
+/**
+ * Function to show user has won the game
+ * and allows user to reset the game
+ */
+function showGameWonModal(){
+    let modal = document.querySelector("#modal-game-win");
+    let modalClose = document.getElementsByClassName("close")[0];
+    modal.style.display = "block";
+
+    // Allows user to dimiss the modal message
+    modalClose.onclick = function(){
+        modal.style.display = "none";
     }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    console.log("win game!");
 }
