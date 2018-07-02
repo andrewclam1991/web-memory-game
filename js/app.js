@@ -9,6 +9,11 @@ let openCards = new Array(0);
 // list to store the open card pending checks
 let matchedCards = new Array(0);
 
+// instance var to store the number of moves
+let moves = 0;
+
+// instance var to store the number of stars
+let stars = 0;
 
 /*
  * 2. Display the cards on the page
@@ -54,6 +59,14 @@ function initGame(){
 
     // reset match cards
     matchedCards = new Array(0);
+
+    // reset moves
+    moves = 0;
+    updateMoves(moves);
+
+    // reset stars
+    updateStars(moves);
+
 }
 
 /**
@@ -106,20 +119,17 @@ const handleClick = function (event) {
         // TODO win state
         showGameWonModal();
     }
+
+    // increment the moves
+    updateMoves(++moves);
+
+    // check moves and update the stars
+    updateStars(moves);
 };
 
 // delegate click event to each child li element
 const deck = document.getElementById('main-deck');
 deck.addEventListener('click', handleClick);
-
-/**
- * function to show the card
- * @param {Node} card to be shown
- */
-function showCard(card) {
-    card.classList.add("open");
-    card.classList.add("show");
-}
 
 /**
  * function to add card to open list.
@@ -153,7 +163,45 @@ function addCardToCheckList(card) {
 }
 
 /**
- * function to hide the card 
+ * function to update ui moves
+ * @param {Number} moves current instance of moves
+ */
+function updateMoves(moves){
+    const movesSpan = document.getElementsByClassName('moves')[0];
+    movesSpan.innerHTML = moves; 
+}
+
+/**
+ * function to update ui stars, more moves, less stars
+ * @param {Number} moves current instance of moves
+ */
+function updateStars(moves){
+    const stars = document.getElementsByClassName('stars')[0];
+    const faStars = stars.childNodes;
+    const TWO_STAR_MOVES = 25; 
+    const ONE_STAR_MOVES = 50;
+
+    if(moves <= TWO_STAR_MOVES){
+        // show three stars
+        
+    }else if(moves > TWO_STAR_MOVES && moves < ONE_STAR_MOVES){
+        // show two stars
+    }else if(moves >= ONE_STAR_MOVES){
+        // show one stars
+    }
+}
+
+/**
+ * function to update ui to show the card
+ * @param {Node} card to be shown
+ */
+function showCard(card) {
+    card.classList.add("open");
+    card.classList.add("show");
+}
+
+/**
+ * function to update ui to hide the card 
  * @param {Node} card to be hidden
  */
 function hideCard(card) {
@@ -163,7 +211,7 @@ function hideCard(card) {
 }
 
 /**
- * function to show the card is matched
+ * function to update ui to show the card is matched
  * @param {Node} card to mark as matched
  */
 function matchCard(card) {
@@ -173,7 +221,7 @@ function matchCard(card) {
 }
 
 /**
- * Function to show user has won the game
+ * Function to update ui to show user has won the game
  * and allows user to reset the game
  */
 function showGameWonModal(){
