@@ -13,7 +13,7 @@ let matchedCards = new Array(0);
 let moves = 0;
 
 // instance var to store the number of stars
-let stars = 0;
+let stars = 3;
 
 /*
  * 2. Display the cards on the page
@@ -114,17 +114,17 @@ const handleClick = function (event) {
     // add card to the list of open cards
     addCardToCheckList(card);
 
-    // end game is reached if matched card is at numCards
-    if (matchedCards.length === NUM_CARDS) {
-        // TODO win state
-        showGameWonModal();
-    }
-
     // increment the moves
     updateMoves(++moves);
 
     // check moves and update the stars
     updateStars(moves);
+
+    // end game is reached if matched card is at numCards
+    if (matchedCards.length === NUM_CARDS) {
+        // TODO win state
+        showGameWonModal();
+    }
 };
 
 // delegate click event to each child li element
@@ -176,18 +176,31 @@ function updateMoves(moves){
  * @param {Number} moves current instance of moves
  */
 function updateStars(moves){
-    const stars = document.getElementsByClassName('stars')[0];
-    const faStars = stars.childNodes;
-    const TWO_STAR_MOVES = 25; 
-    const ONE_STAR_MOVES = 50;
+    const firstStar = document.getElementById("first-star");
+    const secondStar = document.getElementById("second-star");
+    const thirdStar = document.getElementById("third-star");
 
-    if(moves <= TWO_STAR_MOVES){
-        // show three stars
-        
-    }else if(moves > TWO_STAR_MOVES && moves < ONE_STAR_MOVES){
-        // show two stars
-    }else if(moves >= ONE_STAR_MOVES){
-        // show one stars
+    const TWO_STAR_MOVES = 32; 
+    const ONE_STAR_MOVES = 64;
+    const NO_STAR_MOVES = 128;
+
+    if (moves < TWO_STAR_MOVES){
+        // still good or resets
+        firstStar.style.visibility = "visible";
+        secondStar.style.visibility = "visible";
+        thirdStar.style.visibility = "visible";
+    }else if(moves >= TWO_STAR_MOVES && moves < ONE_STAR_MOVES){
+        // remove a star (hide the third star)
+        thirdStar.style.visibility = "hidden";
+        console.log("third star gone");
+    }else if(moves >= ONE_STAR_MOVES && moves < NO_STAR_MOVES){
+        // remove another star (hide the second star)
+        secondStar.style.visibility = "hidden";
+        console.log("second star gone");
+    }else if(moves >= NO_STAR_MOVES){
+        // remove the last star (hide the first star)
+        firstStar.style.visibility = "hidden";
+        console.log("last star gone");
     }
 }
 

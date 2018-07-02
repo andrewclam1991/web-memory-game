@@ -103,6 +103,10 @@ h1 {
     display: inline-block;
 }
 
+.score-panel .stars li i .hidden{
+    visibility: hidden;
+}
+
 .score-panel .restart {
     float: right;
     cursor: pointer;
