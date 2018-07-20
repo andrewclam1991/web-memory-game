@@ -4,16 +4,17 @@
 const NUM_CARDS = 16;
 
 // list to store all currently matched cards
-let openCards = new Array(0);
+let mOpenCards = new Array(0);
 
 // list to store the open card pending checks
-let matchedCards = new Array(0);
+let mMatchedCards = new Array(0);
 
 // instance var to store the number of moves
-let moves = 0;
+let mMoves = 0;
 
-// instance var to store the number of stars
-let stars = 3;
+// Allow player to reset game
+let mResetGameBtn = document.querySelector(".restart");
+mResetGameBtn.addEventListener('click',initGame());
 
 /*
  * 2. Display the cards on the page
@@ -25,10 +26,6 @@ initGame();
 
 // TODO test
 // showGameWonModal();
-
-// Allow player to reset game
-let resetGameBtn = document.querySelector(".restart");
-resetGameBtn.addEventListener('click',initGame);
 
 /**
  * Function that initializes the memory game
@@ -55,18 +52,19 @@ function initGame(){
     }
 
     // reset open cards
-    openCards = new Array(0);
+    mOpenCards = new Array(0);
 
     // reset match cards
-    matchedCards = new Array(0);
+    mMatchedCards = new Array(0);
 
-    // reset moves
-    moves = 0;
-    updateMoves(moves);
+    // reset instance moves
+    mMoves = 0;
 
-    // reset stars
-    updateStars(moves);
+    // reset moves ui
+    updateMoves(0);
 
+    // reset stars ui
+    updateStars(0);
 }
 
 /**
@@ -105,8 +103,8 @@ const handleClick = function (event) {
     // if it is already open
     // if it is already matched
     if (card.nodeName.toLowerCase() !== 'li') return;
-    if (openCards.includes(card)) return;
-    if (matchedCards.includes(card)) return;
+    if (mOpenCards.includes(card)) return;
+    if (mMatchedCards.includes(card)) return;
 
     // show the card
     showCard(card);
@@ -115,13 +113,13 @@ const handleClick = function (event) {
     addCardToCheckList(card);
 
     // increment the moves
-    updateMoves(++moves);
+    updateMoves(++mMoves);
 
     // check moves and update the stars
-    updateStars(moves);
+    updateStars(mMoves);
 
     // end game is reached if matched card is at numCards
-    if (matchedCards.length === NUM_CARDS) {
+    if (mMatchedCards.length === NUM_CARDS) {
         // TODO win state
         showGameWonModal();
     }
@@ -136,20 +134,20 @@ deck.addEventListener('click', handleClick);
  * @param {Node} card to be added and checked
  */
 function addCardToCheckList(card) {
-    openCards.push(card);
-    console.log("pushed card(), current size: " + openCards.length);
+    mOpenCards.push(card);
+    console.log("pushed card(), current size: " + mOpenCards.length);
 
-    if (openCards.length === 2) {
+    if (mOpenCards.length === 2) {
         // open cards stack has two cards now, check if matches
-        let firstCard = openCards[0];
-        let secondCard = openCards[1];
+        let firstCard = mOpenCards[0];
+        let secondCard = mOpenCards[1];
         if (firstCard.isEqualNode(secondCard)) {
             // card match, add them to matched cards stack
             console.log("matched!");
             matchCard(firstCard);
             matchCard(secondCard);
-            matchedCards.push(firstCard);
-            matchedCards.push(secondCard);
+            mMatchedCards.push(firstCard);
+            mMatchedCards.push(secondCard);
         } else {
             // card mismatch
             console.log("mismatch");
@@ -158,7 +156,7 @@ function addCardToCheckList(card) {
             hideCard(secondCard);
         }
         // clear the open card stack
-        openCards = new Array();
+        mOpenCards = new Array();
     }
 }
 
