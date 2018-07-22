@@ -1,20 +1,21 @@
 /*
  * 1. Create a list that holds all of your cards
  */
+// instance constant number of cards
 const NUM_CARDS = 16;
 
-// list to store all currently matched cards
+// instance list to store all currently matched cards
 let mOpenCards = new Array(0);
 
-// list to store the open card pending checks
+// instance list to store the open card pending checks
 let mMatchedCards = new Array(0);
 
 // instance var to store the number of moves
 let mMoves = 0;
 
 // Allow player to reset game
-let mResetGameBtn = document.querySelector(".restart");
-mResetGameBtn.addEventListener('click',initGame());
+let mResetGameBtn = document.getElementById("restart-view");
+mResetGameBtn.addEventListener('click',initGame);
 
 /*
  * 2. Display the cards on the page
@@ -34,21 +35,21 @@ initGame();
  */
 function initGame(){
     // get the list of existing cards
-    let cards = new Array(NUM_CARDS);
-    cards = document.getElementsByClassName("card");
+    let cardViews = new Array(NUM_CARDS);
+    cardViews = document.getElementsByClassName("card-view");
     
     // Creates a list to store each cards' content
-    let cardContents = new Array();
-    for(let i = 0; i < cards.length; i++){
-        let cardContent = cards[i].getElementsByTagName("i")[0];
-        cardContents.push(cardContent);
+    let cardContentViews = new Array();
+    for(let i = 0; i < cardViews.length; i++){
+        let cardContentView = cardViews[i].getElementsByTagName("i")[0];
+        cardContentViews.push(cardContentView);
     }   
 
     // shuffle the card contents
-    cardContents = shuffle(cardContents);
-    for (let j = 0; j < cards.length; j++) {
-        cards[j].appendChild(cardContents[j]);
-        hideCard(cards[j]);
+    cardContentViews = shuffle(cardContentViews);
+    for (let j = 0; j < cardViews.length; j++) {
+        cardViews[j].appendChild(cardContentViews[j]);
+        hideCard(cardViews[j]);
     }
 
     // reset open cards
@@ -65,6 +66,9 @@ function initGame(){
 
     // reset stars ui
     updateStars(0);
+
+    // reset timer
+    initTimer();
 }
 
 /**
@@ -126,8 +130,8 @@ const handleClick = function (event) {
 };
 
 // delegate click event to each child li element
-const deck = document.getElementById('main-deck');
-deck.addEventListener('click', handleClick);
+const deckView = document.getElementById('main-deck');
+deckView.addEventListener('click', handleClick);
 
 /**
  * function to add card to open list.
@@ -165,8 +169,8 @@ function addCardToCheckList(card) {
  * @param {Number} moves current instance of moves
  */
 function updateMoves(moves){
-    const movesSpan = document.getElementsByClassName('moves')[0];
-    movesSpan.innerHTML = moves; 
+    const movesView = document.getElementById('moves-view')[0];
+    movesView.innerHTML = moves; 
 }
 
 /**
@@ -174,61 +178,56 @@ function updateMoves(moves){
  * @param {Number} moves current instance of moves
  */
 function updateStars(moves){
-    const firstStar = document.getElementById("first-star");
-    const secondStar = document.getElementById("second-star");
-    const thirdStar = document.getElementById("third-star");
+    const firstStarView = document.getElementById("first-star-view");
+    const secondStarView = document.getElementById("second-star-view");
+    const thirdStarView = document.getElementById("third-star-view");
 
     const TWO_STAR_MOVES = 32; 
     const ONE_STAR_MOVES = 64;
-    const NO_STAR_MOVES = 128;
 
     if (moves < TWO_STAR_MOVES){
-        // still good or resets
-        firstStar.style.visibility = "visible";
-        secondStar.style.visibility = "visible";
-        thirdStar.style.visibility = "visible";
+        // still good, or resets to three stars
+        firstStarView.style.visibility = "visible";
+        secondStarView.style.visibility = "visible";
+        thirdStarView.style.visibility = "visible";
     }else if(moves >= TWO_STAR_MOVES && moves < ONE_STAR_MOVES){
-        // remove a star (hide the third star)
-        thirdStar.style.visibility = "hidden";
+        // remove a star, shows only two stars
+        thirdStarView.style.visibility = "hidden";
         console.log("third star gone");
-    }else if(moves >= ONE_STAR_MOVES && moves < NO_STAR_MOVES){
-        // remove another star (hide the second star)
-        secondStar.style.visibility = "hidden";
+    }else if(moves >= ONE_STAR_MOVES){
+        // remover a star, shows only one star
+        secondStarView.style.visibility = "hidden";
         console.log("second star gone");
-    }else if(moves >= NO_STAR_MOVES){
-        // remove the last star (hide the first star)
-        firstStar.style.visibility = "hidden";
-        console.log("last star gone");
     }
 }
 
 /**
  * function to update ui to show the card
- * @param {Node} card to be shown
+ * @param {Node} cardView to be shown
  */
-function showCard(card) {
-    card.classList.add("open");
-    card.classList.add("show");
+function showCard(cardView) {
+    cardView.classList.add("open");
+    cardView.classList.add("show");
 }
 
 /**
  * function to update ui to hide the card 
- * @param {Node} card to be hidden
+ * @param {Node} cardView to be hidden
  */
-function hideCard(card) {
-    card.classList.remove("match");
-    card.classList.remove("open");
-    card.classList.remove("show");
+function hideCard(cardView) {
+    cardView.classList.remove("match");
+    cardView.classList.remove("open");
+    cardView.classList.remove("show");
 }
 
 /**
  * function to update ui to show the card is matched
- * @param {Node} card to mark as matched
+ * @param {Node} cardView to mark as matched
  */
-function matchCard(card) {
-    card.classList.remove("open");
-    card.classList.remove("show");
-    card.classList.add("match");
+function matchCard(cardView) {
+    cardView.classList.remove("open");
+    cardView.classList.remove("show");
+    cardView.classList.add("match");
 }
 
 /**
@@ -236,21 +235,30 @@ function matchCard(card) {
  * and allows user to reset the game
  */
 function showGameWonModal(){
-    let modal = document.querySelector("#modal-game-win");
-    let modalClose = document.getElementsByClassName("close")[0];
-    modal.style.display = "block";
+    let modalView = document.getElementById("modal-game-win-view");
+    let modalCloseBtn = document.getElementById("modal-close-btn")[0];
+    modalView.style.display = "block";
 
     // Allows user to dimiss the modal message
-    modalClose.onclick = function(){
-        modal.style.display = "none";
+    modalCloseBtn.onclick = function(){
+        modalView.style.display = "none";
     }
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+        if (event.target == modalView) {
+            modalView.style.display = "none";
         }
     }
 
     console.log("win game!");
+}
+
+/**
+ * Function to update ui to show user the elapsed time
+ * given the parameter
+ * @param {Number} number of elpased seconds
+ */
+function setTimer(elapsedTime){
+    let timeView = document.getElementById("timer-view");
 }
