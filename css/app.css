@@ -103,6 +103,10 @@ h1 {
     display: inline-block;
 }
 
+.score-panel .stars li i .hidden{
+    visibility: hidden;
+}
+
 .score-panel .restart {
     float: right;
     cursor: pointer;
@@ -127,7 +131,7 @@ h1 {
 }
 
 /* Modal - Content */
-.modal-content {
+#modal-content-view {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
@@ -136,15 +140,15 @@ h1 {
 }
 
 /* Modal - Close Button */
-.close {
+#modal-close-btn {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+#close-close-btn:hover,
+#close-close-btn:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
