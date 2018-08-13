@@ -25,9 +25,6 @@ mResetGameBtn.addEventListener('click',initGame);
  */
 initGame();
 
-// TODO test
-// showGameWonModal();
-
 /**
  * Function that initializes the memory game
  * responsible for shuffling the cards and generate the 
@@ -46,7 +43,7 @@ function initGame(){
     }   
 
     // shuffle the card contents
-    cardContentViews = shuffle(cardContentViews);
+    cardContentViews = shuffleCards(cardContentViews);
     for (let j = 0; j < cardViews.length; j++) {
         cardViews[j].appendChild(cardContentViews[j]);
         hideCard(cardViews[j]);
@@ -75,7 +72,7 @@ function initGame(){
  * Function the handles shuffling an array
  * a function from http://stackoverflow.com/a/2450976
  */
-function shuffle(array) {
+function shuffleCards(array) {
     let currentIndex = array.length;
     let temporaryValue, randomIndex;
 
@@ -251,14 +248,22 @@ function showGameWonModal(){
         }
     }
 
-    console.log("win game!");
+    console.log("game won!");
+}
+
+/**
+ * Function to start the timer in the ui
+ */
+function startTimer(){
+    // TODO implement start timer 
+    let timeView = document.getElementById("timer-view");
 }
 
 /**
  * Function to update ui to show user the elapsed time
  * given the parameter
- * @param {Number} number of elpased seconds
  */
-function setTimer(elapsedTime){
+function stopTimer(){
+    // TODO implement stop timer
     let timeView = document.getElementById("timer-view");
 }
