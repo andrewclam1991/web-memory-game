@@ -13,9 +13,15 @@ let mMatchedCards = new Array(0);
 // instance var to store the number of moves
 let mMoves = 0;
 
+// instance var to track the on/off state of the timer
+let isTimerStarted = false;
+
+// instance var to track the total elapsed seconds
+let mElapsedSeconds = 0;
+
 // Allow player to reset game
 let mResetGameBtn = document.getElementById("restart-view");
-mResetGameBtn.addEventListener('click',initGame);
+mResetGameBtn.addEventListener('click', initGame);
 
 /*
  * 2. Display the cards on the page
@@ -30,17 +36,17 @@ initGame();
  * responsible for shuffling the cards and generate the 
  * game baord.
  */
-function initGame(){
+function initGame() {
     // get the list of existing cards
     let cardViews = new Array(NUM_CARDS);
     cardViews = document.getElementsByClassName("card-view");
-    
+
     // Creates a list to store each cards' content
     let cardContentViews = new Array();
-    for(let i = 0; i < cardViews.length; i++){
+    for (let i = 0; i < cardViews.length; i++) {
         let cardContentView = cardViews[i].getElementsByTagName("i")[0];
         cardContentViews.push(cardContentView);
-    }   
+    }
 
     // shuffle the card contents
     cardContentViews = shuffleCards(cardContentViews);
@@ -65,7 +71,7 @@ function initGame(){
     updateStars(0);
 
     // reset timer
-    initTimer();
+    stopTimer();
 }
 
 /**
@@ -106,6 +112,8 @@ const handleClick = function (event) {
     if (card.nodeName.toLowerCase() !== 'li') return;
     if (mOpenCards.includes(card)) return;
     if (mMatchedCards.includes(card)) return;
+
+    startTimer();
 
     // show the card
     showCard(card);
@@ -165,33 +173,33 @@ function addCardToCheckList(card) {
  * function to update ui moves
  * @param {Number} moves current instance of moves
  */
-function updateMoves(moves){
-    const movesView = document.getElementById('moves-view')[0];
-    movesView.innerHTML = moves; 
+function updateMoves(moves) {
+    const movesView = document.getElementById("moves-view");
+    movesView.innerText = moves;
 }
 
 /**
  * function to update ui stars, more moves, less stars
  * @param {Number} moves current instance of moves
  */
-function updateStars(moves){
+function updateStars(moves) {
     const firstStarView = document.getElementById("first-star-view");
     const secondStarView = document.getElementById("second-star-view");
     const thirdStarView = document.getElementById("third-star-view");
 
-    const TWO_STAR_MOVES = 32; 
+    const TWO_STAR_MOVES = 32;
     const ONE_STAR_MOVES = 64;
 
-    if (moves < TWO_STAR_MOVES){
+    if (moves < TWO_STAR_MOVES) {
         // still good, or resets to three stars
         firstStarView.style.visibility = "visible";
         secondStarView.style.visibility = "visible";
         thirdStarView.style.visibility = "visible";
-    }else if(moves >= TWO_STAR_MOVES && moves < ONE_STAR_MOVES){
+    } else if (moves >= TWO_STAR_MOVES && moves < ONE_STAR_MOVES) {
         // remove a star, shows only two stars
         thirdStarView.style.visibility = "hidden";
         console.log("third star gone");
-    }else if(moves >= ONE_STAR_MOVES){
+    } else if (moves >= ONE_STAR_MOVES) {
         // remover a star, shows only one star
         secondStarView.style.visibility = "hidden";
         console.log("second star gone");
@@ -231,18 +239,18 @@ function matchCard(cardView) {
  * Function to update ui to show user has won the game
  * and allows user to reset the game
  */
-function showGameWonModal(){
+function showGameWonModal() {
     let modalView = document.getElementById("modal-game-win-view");
     let modalCloseBtn = document.getElementById("modal-close-btn")[0];
     modalView.style.display = "block";
 
     // Allows user to dimiss the modal message
-    modalCloseBtn.onclick = function(){
+    modalCloseBtn.onclick = function () {
         modalView.style.display = "none";
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (event.target == modalView) {
             modalView.style.display = "none";
         }
@@ -252,18 +260,36 @@ function showGameWonModal(){
 }
 
 /**
- * Function to start the timer in the ui
+ * Function to start the timer
  */
-function startTimer(){
-    // TODO implement start timer 
-    let timeView = document.getElementById("timer-view");
+function startTimer() { 
+    isTimerStarted = true;
+    mElapsedSeconds = 0;
+    setInterval(countUp(), 1000);
+}
+
+function countUp() {
+    if (isTimerStarted) {
+        mElapsedSeconds++;
+        setElapsedTime(mElapsedSeconds);
+    }
 }
 
 /**
- * Function to update ui to show user the elapsed time
- * given the parameter
+ * Function to show the current elasped time in the ui
+ * @param {number} seconds elapsed time in seconds
  */
-function stopTimer(){
-    // TODO implement stop timer
-    let timeView = document.getElementById("timer-view");
+function setElapsedTime(seconds) {
+    const timeView = document.getElementById("elapsed-time-view");
+    timeView.innerText = seconds;
+}
+
+/**
+ * Function to stop the timer, and resets the
+ * elapsed time.
+ */
+function stopTimer() {
+    isTimerStarted = false;
+    mElapsedSeconds = 0;
+    setElapsedTime(mElapsedSeconds);
 }
