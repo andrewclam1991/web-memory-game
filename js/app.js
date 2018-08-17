@@ -1,59 +1,247 @@
-/*
- * 1. Create a list that holds all of your cards
+/** Execution Block */
+const view = new View();
+view.main();
+
+/**
+ * Class responsible for binding views
  */
-// instance constant number of cards
-const NUM_CARDS = 16;
+class View {
+    // view references
+    mResetButton = document.getElementById("restart-view");
+    mElapsedTimeTextView = document.getElementById("elapsed-time-view");
+    mCardViews = document.getElementsByClassName("card-view");
 
-// instance list to store all currently matched cards
-let mOpenCards = new Array(0);
+    /**
+     * Main method of execution
+     */
+    main() {
+        let mPresenter = new Presenter(this);
 
-// instance list to store the open card pending checks
-let mMatchedCards = new Array(0);
+        // start the game
+        mPresenter.handleStartGame();
 
-// instance var to store the number of moves
-let mMoves = 0;
+        // allow user to restart game
+        mResetButton.addEventListener('click', mPresenter.handleRestartGame());
+    }
 
-// instance var to track the on/off state of the timer
-let isTimerStarted = false;
+    /**
+     * Sets a card's content by its index
+     * @param {Number} index index of the card in the cardViews
+     * @param {String} content html content  
+     */
+    setCardContentByIndex(index, content) {
+        mCardViews[index].appendChild(content);
+    }
 
-// instance var to track the total elapsed seconds
-let mElapsedSeconds = 0;
+    /**
+     * Gets a card's content by its index
+     * @param {Number} index index of the card in the cardViews
+     */
+    getCardContentByIndex(index) {
+        return this.mCardViews[index].getElementsByTagName("i")[0];
+    }
 
-// Allow player to reset game
-let mResetGameBtn = document.getElementById("restart-view");
-mResetGameBtn.addEventListener('click', initGame);
+    /**
+     * Sets a card's visibility by its index
+     * @param {Number} index index of the card in the cardViews
+     * @param {Boolean} isVisible flags whether this card is visible
+     */
+    setCardVisibility(index, isVisible) {
+        const cardView = mCardViews[index];
+        if (isVisible) {
+            cardView.classList.add("open");
+            cardView.classList.add("show");
+        } else {
+            cardView.classList.remove("open");
+            cardView.classList.remove("show");
+        }
+    }
 
-/*
- * 2. Display the cards on the page
- *   - shuffle the list of cards content using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
+    /**
+     * Sets the game's elapsed time since the start
+     * @param {Number} seconds current game's elapsed time in seconds
+     */
+    showElapsedTime(seconds) {
+        mElapsedTimeTextView.innerText = seconds;
+    }
+
+}
+
+/**
+ * Class responsible for manipuating the {@link View} class
  */
-initGame();
+class Presenter {
+
+    /**
+     * Constructs a presenter for the parameter view
+     * @param {View} view 
+     */
+    constructor(view) {
+        this.mView = view;
+        this.mModel = new Model();
+    }
+
+    /**
+     * Drops the reference to the View
+     */
+    dropView() {
+        this.mView = null;
+    }
+
+    /**
+     * Starts the game
+     */
+    handleStartGame() {
+        // shuffles the cards
+        this.handleShuffleCards();
+    }
+
+    /**
+     * Restarts the game
+     */
+    handleRestartGame() {
+        this.mView.main();
+    }
+
+    /**
+     * Shuffes the cards
+     */
+    handleShuffleCards() {
+        // Creates a list to store each cards' content
+        let cardContentArray = new Array();
+        for (let i = 0; i < cardViews.length; i++) {
+            let cardContent = this.mView.getCardContentByIndex(i);
+            cardContentArray.push(cardContent);
+        }
+
+        // Notifies the view to update the card positions
+        cardContentArray = shuffleCards(cardContentArray);
+        function shuffleCards(array) {
+            let currentIndex = array.length;
+            let temporaryValue, randomIndex;
+
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+            return array;
+        }
+
+        for (let j = 0; j < cardViews.length; j++) {
+            this.mView.setCardContentByIndex(j, cardContentArray[j]);
+            this.mView.setCardVisibility(j, false)
+        }
+    }
+}
+
+
+/**
+ * Responsible for holding app states and data
+ */
+class Model {
+    constructor() {
+        this.mNumCards = 16;
+        this.mOpenCards = new Array(0);
+        this.mMatchedCards = new Array(0);
+        this.mMoves = 0;
+        this.mElapsedTime = 0;
+        this.mTimerObservers = new Array(0);
+    }
+
+    // CARDS
+    clearOpenCards() {
+        this.mOpenCards = new Array(0);
+    }
+
+    clearMatchedCards() {
+        this.mMatchedCards = new Array(0);
+    }
+
+    // MOVES
+    resetMoves() {
+        this.mMoves = 0;
+    }
+
+    addMove() {
+        this.mMoves++;
+    }
+
+    addMovesObserver(observer){
+        this.mMovesObserver.add(observer);
+    }
+
+    notifyMovesObservers(currentMoves){
+        this.mMovesObserver.forEach();
+    }
+
+    // STARS
+    resetStars() {
+        this.mStars = 0;
+        this.notifyStarsObservers(mStars);
+    }
+
+    removeStar() { 
+        this.mStars--;
+        this.notifyStarsObservers(mStars);
+    }
+
+    addStarsObserver(observer){
+        this.mStarsObservers.add(observer);
+    }
+
+    notifyStarsObservers(currentStars){
+        this.mStarsObservers.forEach();
+    }
+
+    // TIMER
+    startTimer() {
+        
+    }
+
+    stopTimer() {
+        
+    }
+
+    addTimerObserver(observer){
+        this.mTimerObservers.add(observer);
+    }
+
+    notifyTimerObservers(currentTime){
+        this.mTimerObservers.forEach();
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Function that initializes the memory game
  * responsible for shuffling the cards and generate the 
  * game baord.
  */
-function initGame() {
-    // get the list of existing cards
-    let cardViews = new Array(NUM_CARDS);
-    cardViews = document.getElementsByClassName("card-view");
+function main() {
 
-    // Creates a list to store each cards' content
-    let cardContentViews = new Array();
-    for (let i = 0; i < cardViews.length; i++) {
-        let cardContentView = cardViews[i].getElementsByTagName("i")[0];
-        cardContentViews.push(cardContentView);
-    }
-
-    // shuffle the card contents
-    cardContentViews = shuffleCards(cardContentViews);
-    for (let j = 0; j < cardViews.length; j++) {
-        cardViews[j].appendChild(cardContentViews[j]);
-        hideCard(cardViews[j]);
-    }
+    startTimer();
 
     // reset open cards
     mOpenCards = new Array(0);
@@ -69,27 +257,6 @@ function initGame() {
 
     // reset stars ui
     updateStars(0);
-
-    // reset timer
-    stopTimer();
-}
-
-/**
- * Function the handles shuffling an array
- * a function from http://stackoverflow.com/a/2450976
- */
-function shuffleCards(array) {
-    let currentIndex = array.length;
-    let temporaryValue, randomIndex;
-
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-    return array;
 }
 
 /*
@@ -113,8 +280,6 @@ const handleClick = function (event) {
     if (mOpenCards.includes(card)) return;
     if (mMatchedCards.includes(card)) return;
 
-    startTimer();
-
     // show the card
     showCard(card);
 
@@ -131,6 +296,9 @@ const handleClick = function (event) {
     if (mMatchedCards.length === NUM_CARDS) {
         // TODO win state
         showGameWonModal();
+
+        // stop the timer
+        stopTimer();
     }
 };
 
@@ -241,7 +409,7 @@ function matchCard(cardView) {
  */
 function showGameWonModal() {
     let modalView = document.getElementById("modal-game-win-view");
-    let modalCloseBtn = document.getElementById("modal-close-btn")[0];
+    let modalCloseBtn = document.getElementById("modal-close-btn");
     modalView.style.display = "block";
 
     // Allows user to dimiss the modal message
@@ -262,17 +430,15 @@ function showGameWonModal() {
 /**
  * Function to start the timer
  */
-function startTimer() { 
-    isTimerStarted = true;
-    mElapsedSeconds = 0;
-    setInterval(countUp(), 1000);
-}
-
-function countUp() {
-    if (isTimerStarted) {
+function startTimer() {
+    const handler = function () {
+        console.log("handler() triggered, current time: " + mElapsedSeconds);
         mElapsedSeconds++;
         setElapsedTime(mElapsedSeconds);
     }
+    console.log("timer started: " + mElapsedSeconds);
+    mElapsedSeconds = 0;
+    mTimerIntervalId = setInterval(handler, 1000);
 }
 
 /**
@@ -280,8 +446,8 @@ function countUp() {
  * @param {number} seconds elapsed time in seconds
  */
 function setElapsedTime(seconds) {
-    const timeView = document.getElementById("elapsed-time-view");
-    timeView.innerText = seconds;
+    const elapsedTimeView = document.getElementById("elapsed-time-view");
+    elapsedTimeView.innerText = seconds;
 }
 
 /**
@@ -289,7 +455,5 @@ function setElapsedTime(seconds) {
  * elapsed time.
  */
 function stopTimer() {
-    isTimerStarted = false;
-    mElapsedSeconds = 0;
-    setElapsedTime(mElapsedSeconds);
+    window.clearInterval(mTimerIntervalId);
 }
