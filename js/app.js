@@ -1,27 +1,29 @@
-/** Execution Block */
-const view = new View();
-view.main();
-
 /**
  * Class responsible for binding views
  */
 class View {
     // view references
-    mResetButton = document.getElementById("restart-view");
-    mElapsedTimeTextView = document.getElementById("elapsed-time-view");
-    mCardViews = document.getElementsByClassName("card-view");
+    constructor() {
+        this.mResetButton = document.getElementById("restart-view");
+        this.mElapsedTimeTextView = document.getElementById("elapsed-time-view");
+        this.mCardViews = document.getElementsByClassName("card-view");
+        this.mDeckView = document.getElementById('main-deck');
+    }
 
     /**
      * Main method of execution
      */
     main() {
-        let mPresenter = new Presenter(this);
+        const mController = new Controller(this);
 
         // start the game
-        mPresenter.handleStartGame();
+        mController.handleStartGame();
 
         // allow user to restart game
-        mResetButton.addEventListener('click', mPresenter.handleRestartGame());
+        this.mResetButton.addEventListener('click', mController.handleRestartGame);
+
+        // handles user click on a card
+        this.mDeckView.addEventListener('click', mController.handleOnCardClicked(event));
     }
 
     /**
@@ -30,7 +32,7 @@ class View {
      * @param {String} content html content  
      */
     setCardContentByIndex(index, content) {
-        mCardViews[index].appendChild(content);
+        this.mCardViews[index].appendChild(content);
     }
 
     /**
@@ -47,7 +49,7 @@ class View {
      * @param {Boolean} isVisible flags whether this card is visible
      */
     setCardVisibility(index, isVisible) {
-        const cardView = mCardViews[index];
+        const cardView = this.mCardViews[index];
         if (isVisible) {
             cardView.classList.add("open");
             cardView.classList.add("show");
@@ -68,24 +70,18 @@ class View {
 }
 
 /**
- * Class responsible for manipuating the {@link View} class
+ * Class responsible for handling user events from {@link View} class
+ * and changing {@link Model} states
  */
-class Presenter {
+class Controller {
 
     /**
-     * Constructs a presenter for the parameter view
+     * Constructs a Controller for the parameter view
      * @param {View} view 
      */
     constructor(view) {
         this.mView = view;
-        this.mModel = new Model();
-    }
-
-    /**
-     * Drops the reference to the View
-     */
-    dropView() {
-        this.mView = null;
+        this.mModel = new Model(view);
     }
 
     /**
@@ -94,6 +90,10 @@ class Presenter {
     handleStartGame() {
         // shuffles the cards
         this.handleShuffleCards();
+        // reset the moves.
+        this.mModel.resetMoves();
+        // reset the stars
+        this.mModel.resetStars();
     }
 
     /**
@@ -109,7 +109,7 @@ class Presenter {
     handleShuffleCards() {
         // Creates a list to store each cards' content
         let cardContentArray = new Array();
-        for (let i = 0; i < cardViews.length; i++) {
+        for (let i = 0; i < this.mView.mCardViews.length; i++) {
             let cardContent = this.mView.getCardContentByIndex(i);
             cardContentArray.push(cardContent);
         }
@@ -130,10 +130,27 @@ class Presenter {
             return array;
         }
 
-        for (let j = 0; j < cardViews.length; j++) {
+        for (let j = 0; j < this.mView.mCardViews.length; j++) {
             this.mView.setCardContentByIndex(j, cardContentArray[j]);
             this.mView.setCardVisibility(j, false)
         }
+    }
+
+    /**
+     * Handle on card clicked
+     */
+    handleOnCardClicked(event) {
+        const card = event.target;
+        // skip and return if event target is not li or 
+        // if it is already open
+        // if it is already matched
+        if (card.nodeName.toLowerCase() !== 'li' ||
+            this.mModel.mOpenCards.includes(card) ||
+            this.mModel.mMatchedCards.includes(card)) {
+            return;
+        }
+
+        this.mView.setCardContentByIndex(0, true);
     }
 }
 
@@ -142,16 +159,25 @@ class Presenter {
  * Responsible for holding app states and data
  */
 class Model {
-    constructor() {
+    constructor(view) {
         this.mNumCards = 16;
         this.mOpenCards = new Array(0);
         this.mMatchedCards = new Array(0);
+        this.mStars = 3;
         this.mMoves = 0;
         this.mElapsedTime = 0;
+
+        this.mMovesObservers = new Array(0);
+        this.mStarsObservers = new Array(0);
         this.mTimerObservers = new Array(0);
+
+        // Register Model observer(s)
+        this.addMovesObserver(view);
+        this.addStarsObserver(view);
+        this.addTimerObserver(view);
     }
 
-    // CARDS
+    // Cards
     clearOpenCards() {
         this.mOpenCards = new Array(0);
     }
@@ -160,60 +186,71 @@ class Model {
         this.mMatchedCards = new Array(0);
     }
 
-    // MOVES
+    // Moves
     resetMoves() {
         this.mMoves = 0;
+        this.notifyMovesObservers(this.mMoves);
     }
 
     addMove() {
         this.mMoves++;
+        this.notifyMovesObservers(this.mMoves);
     }
 
-    addMovesObserver(observer){
-        this.mMovesObserver.add(observer);
+    addMovesObserver(observer) {
+        this.mMovesObservers.push(observer);
     }
 
-    notifyMovesObservers(currentMoves){
-        this.mMovesObserver.forEach();
+    notifyMovesObservers(currentMoves) {
+        // TODO implement for each move updated, update the observers (view)
+        // this.mMovesObservers.forEach();
     }
 
-    // STARS
+    // Stars
     resetStars() {
-        this.mStars = 0;
-        this.notifyStarsObservers(mStars);
+        this.mStars = 3;
+        this.notifyStarsObservers(this.mStars);
     }
 
-    removeStar() { 
+    removeStar() {
         this.mStars--;
-        this.notifyStarsObservers(mStars);
+        this.notifyStarsObservers(this.mStars);
     }
 
-    addStarsObserver(observer){
-        this.mStarsObservers.add(observer);
+    addStarsObserver(observer) {
+        this.mStarsObservers.push(observer);
     }
 
-    notifyStarsObservers(currentStars){
-        this.mStarsObservers.forEach();
+    notifyStarsObservers(currentStars) {
+        // TODO implement for each stars updated, update the observers (view)
+        // this.mStarsObservers.forEach();
     }
 
-    // TIMER
+    // Timer
     startTimer() {
-        
+
     }
 
     stopTimer() {
-        
+
     }
 
-    addTimerObserver(observer){
-        this.mTimerObservers.add(observer);
+    addTimerObserver(observer) {
+        this.mTimerObservers.push(observer);
     }
 
-    notifyTimerObservers(currentTime){
-        this.mTimerObservers.forEach();
+    notifyTimerObservers(currentTime) {
+        // TODO implement when timer updates, update the observer (view)
+        // this.mTimerObservers.forEach();
     }
 
 }
+
+
+/** Execution Block */
+const view = new View();
+view.main();
+
 
 
 
