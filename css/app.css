@@ -37,7 +37,7 @@ h1 {
  * Styles for the deck of cards
  */
 
-.deck {
+.deck-view {
     width: 660px;
     min-height: 680px;
     background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
@@ -51,7 +51,7 @@ h1 {
     margin: 0 0 3em;
 }
 
-.deck .card {
+.deck-view .card-view {
     height: 125px;
     width: 125px;
     background: #2e3d49;
@@ -65,17 +65,17 @@ h1 {
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
 }
 
-.deck .card.open {
+.deck-view .card-view.open {
     transform: rotateY(0);
     background: #02b3e4;
     cursor: default;
 }
 
-.deck .card.show {
+.deck-view .card-view.show {
     font-size: 33px;
 }
 
-.deck .card.match {
+.deck-view .card-view.match {
     cursor: default;
     background: #02ccba;
     font-size: 33px;
@@ -85,29 +85,29 @@ h1 {
  * Styles for the Score Panel
  */
 
-.score-panel {
+.score-panel-view {
     text-align: left;
     width: 345px;
     margin-bottom: 10px;
 }
 
-.score-panel .stars {
+.score-panel-view .stars {
     margin: 0;
     padding: 0;
     display: inline-block;
     margin: 0 5px 0 0;
 }
 
-.score-panel .stars li {
+.score-panel-view .stars li {
     list-style: none;
     display: inline-block;
 }
 
-.score-panel .stars li i .hidden{
+.score-panel-view .stars li i .hidden{
     visibility: hidden;
 }
 
-.score-panel .restart {
+.score-panel-view .restart-view {
     float: right;
     cursor: pointer;
 }
@@ -116,7 +116,7 @@ h1 {
    Defines the style of overlay box that show
    user messages. Hidden by default unless triggered 
  */
-.modal {
+.modal-view {
     display: none;
     position: fixed; 
     z-index: 1;
