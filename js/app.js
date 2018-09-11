@@ -66,11 +66,11 @@ class View {
         }
     }
 
-    setCardMatched(cardView, isMatched){
+    setCardMatched(cardView, isMatched) {
         console.log(`show the ${cardView.classList} as matched? ${isMatched}`)
-        if (isMatched){
+        if (isMatched) {
             cardView.classList.add('match');
-        }else{
+        } else {
             cardView.classList.remove('match');
         }
     }
@@ -118,16 +118,21 @@ class Controller {
     handleStartGame() {
         // shuffles the cards
         this.handleShuffleCards();
-        // reset the moves.
+        // resets the moves.
         this.mModel.resetMoves();
-        // reset the stars
+        // resets the stars
         this.mModel.resetStars();
+        // resets the timer
+        this.mModel.resetTimer();
+        // start the timer
+        this.mModel.startTimer();
     }
 
     /**
      * Restarts the game
      */
     handleRestartGame() {
+        this.mModel.stopTimer();
         this.mView.main();
     }
 
@@ -194,6 +199,7 @@ class Model {
         this.mStars = 3;
         this.mMoves = 0;
         this.mElapsedTime = 0;
+        this.mTimerHandle;
 
         this.mMovesObservers = new Array(0);
         this.mStarsObservers = new Array(0);
@@ -255,21 +261,66 @@ class Model {
     }
 
     // Timer
+    /**
+     * Starts the game timer
+     */
     startTimer() {
-
+        console.log("startTimer() called")
+        const model = this;
+        const handler = function () {
+            model.mElapsedTime++;
+            model.notifyTimerObservers(model.mElapsedTime);
+        }
+        this.mElapsedTime = 0;
+        this.mTimerHandle = window.setInterval(handler, 1000);
     }
 
+    /**
+     * Stops the game timer.
+     */
     stopTimer() {
-
+        console.log(`stopTimer() called, clears timed window interval with handle id: ${this.mTimerHandle}`)
+        window.clearInterval(this.mTimerHandle);
     }
 
+    /**
+     * Resets the game timer.
+     */
+    resetTimer() {
+        console.log("resetTimer() called, timer instance set back to 0");
+        this.mElapsedTime = 0;
+        this.stopTimer();
+        this.notifyTimerObservers(this.mElapsedTime);
+    }
+
+    /**
+     * Adds an observer to be notified of game time update
+     * @param {View} observer 
+     */
     addTimerObserver(observer) {
+        console.log("addTimerObserver() called, an observer is added.")
         this.mTimerObservers.push(observer);
     }
 
+    /**
+     * Notifies all observers of game time update
+     * @param {Number} currentTime 
+     */
     notifyTimerObservers(currentTime) {
-        // TODO implement when timer updates, update the observer (view)
-        // this.mTimerObservers.forEach();
+        console.log("notifyTimerObservers() called")
+        console.log(`number of observers ${this.mTimerObservers.length}`)
+        this.mTimerObservers.forEach(function (observer) {
+            console.log(`observer notified of time update, current time: ${currentTime} seconds`)
+            observer.showElapsedTime(currentTime);
+        });
+    }
+
+    /**
+     * Clears all observers from the list
+     */
+    clearTimerObservers() {
+        console.log("clearTimerObservers() called")
+        this.mTimerObservers = new Array(0);
     }
 
 }
