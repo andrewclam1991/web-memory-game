@@ -99,32 +99,15 @@ class View {
         this.mElapsedTimeTextView.innerText = seconds;
     }
 
+    /**
+     * Shows current player's star rating per game
+     * @param {Number} stars rates the player, the more the better.
+     */
     showStars(stars) {
         console.log(`showing game stars: ${stars}`);
-        switch (stars) {
-            case 0:
-                this.mFirstStarView.style.visibility = "hidden";
-                this.mSecondStarView.style.visibility = "hidden";
-                this.mThirdStarView.style.visibility = "hidden";
-                break;
-            case 1:
-                this.mFirstStarView.style.visibility = "visible";
-                this.mSecondStarView.style.visibility = "hidden";
-                this.mThirdStarView.style.visibility = "hidden";
-                break;
-            case 2:
-                this.mFirstStarView.style.visibility = "visible";
-                this.mSecondStarView.style.visibility = "visible";
-                this.mThirdStarView.style.visibility = "hidden";
-                break;
-            case 3:
-                this.mFirstStarView.style.visibility = "visible";
-                this.mSecondStarView.style.visibility = "visible";
-                this.mThirdStarView.style.visibility = "visible";
-                break;
-            default:
-                break;
-        }
+        this.mFirstStarView.style.visibility = stars >= 1? "visible" : "hidden";
+        this.mSecondStarView.style.visibility = stars >= 2? "visible" : "hidden";
+        this.mThirdStarView.style.visibility = stars >= 3? "visible" : "hidden";
     }
 
 }
