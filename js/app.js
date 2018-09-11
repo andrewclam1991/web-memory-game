@@ -1,5 +1,5 @@
 /**
- * Handles view presentation, delegates user interactions 
+ * Handles view presentation, delegates user events 
  * to {@link Controller}
  */
 class View {
@@ -190,8 +190,8 @@ class Controller {
 
 
 /**
- * Holds app states and data, notifies {@link View} class when
- * app states and data changes.
+ * Holds app states and data, notifies {@link View} class 
+ * when app states and data changes.
  */
 class Model {
     constructor(view) {
@@ -207,7 +207,7 @@ class Model {
         this.mStarsObservers = new Array(0);
         this.mTimerObservers = new Array(0);
 
-        // Register Model observer(s)
+        // Register view observer(s)
         this.addMovesObserver(view);
         this.addStarsObserver(view);
         this.addTimerObserver(view);
@@ -322,6 +322,7 @@ class Model {
      */
     clearTimerObservers() {
         console.log("clearTimerObservers() called")
+        delete this.mTimerObservers;
         this.mTimerObservers = new Array(0);
     }
 
@@ -329,8 +330,8 @@ class Model {
 
 
 /** Execution Block */
-const view = new View();
-view.main();
+const mView = new View();
+mView.main();
 
 
 
