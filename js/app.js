@@ -1,5 +1,6 @@
 /**
- * Class responsible for binding views
+ * Handles view presentation, delegates user interactions 
+ * to {@link Controller}
  */
 class View {
     // view references
@@ -98,8 +99,8 @@ class View {
 }
 
 /**
- * Class responsible for handling user events from {@link View} class
- * and changing {@link Model} states
+ * Handles user events from {@link View} class
+ * and modifies {@link Model} states and data
  */
 class Controller {
 
@@ -189,7 +190,8 @@ class Controller {
 
 
 /**
- * Responsible for holding app states and data
+ * Holds app states and data, notifies {@link View} class when
+ * app states and data changes.
  */
 class Model {
     constructor(view) {
