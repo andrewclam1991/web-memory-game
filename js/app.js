@@ -7,6 +7,9 @@ class View {
     constructor() {
         this.mResetButton = document.getElementById("restart-view");
         this.mElapsedTimeTextView = document.getElementById("elapsed-time-view");
+        this.mFirstStarView = document.getElementById("first-star-view");
+        this.mSecondStarView = document.getElementById("second-star-view");
+        this.mThirdStarView = document.getElementById("third-star-view");
         this.mCardViews = document.getElementsByClassName("card-view");
         this.mDeckView = document.getElementById('main-deck');
     }
@@ -94,6 +97,34 @@ class View {
     showElapsedTime(seconds) {
         console.log(`showing elapsed time: ${seconds} seconds`);
         this.mElapsedTimeTextView.innerText = seconds;
+    }
+
+    showStars(stars) {
+        console.log(`showing game stars: ${stars}`);
+        switch (stars) {
+            case 0:
+                this.mFirstStarView.style.visibility = "hidden";
+                this.mSecondStarView.style.visibility = "hidden";
+                this.mThirdStarView.style.visibility = "hidden";
+                break;
+            case 1:
+                this.mFirstStarView.style.visibility = "visible";
+                this.mSecondStarView.style.visibility = "hidden";
+                this.mThirdStarView.style.visibility = "hidden";
+                break;
+            case 2:
+                this.mFirstStarView.style.visibility = "visible";
+                this.mSecondStarView.style.visibility = "visible";
+                this.mThirdStarView.style.visibility = "hidden";
+                break;
+            case 3:
+                this.mFirstStarView.style.visibility = "visible";
+                this.mSecondStarView.style.visibility = "visible";
+                this.mThirdStarView.style.visibility = "visible";
+                break;
+            default:
+                break;
+        }
     }
 
 }
@@ -185,7 +216,30 @@ class Controller {
         }
 
         this.mView.setCardVisibility(card, true);
+
+        // add move, and then check resulting moves
+        this.mapMovesToStars(this.mModel.addMove());
     }
+
+    /**
+     * Checks number of moves to determine whether to deduct stars
+     * @param {*} moves 
+     */
+    mapMovesToStars(moves) {
+        const TWO_STAR_MOVES = 32;
+        const ONE_STAR_MOVES = 64;
+        const ZERO_STAR_MOVES = 96;
+
+        console.log(`current moves: ${moves}`);
+        switch (moves) {
+            case TWO_STAR_MOVES:
+            case ONE_STAR_MOVES:
+            case ZERO_STAR_MOVES:
+                this.mModel.removeStar();
+                break;
+        }
+    }
+
 }
 
 
@@ -231,6 +285,7 @@ class Model {
     addMove() {
         this.mMoves++;
         this.notifyMovesObservers(this.mMoves);
+        return this.mMoves;
     }
 
     addMovesObserver(observer) {
@@ -243,23 +298,43 @@ class Model {
     }
 
     // Stars
+    /**
+     * Resets game stars back to default number
+     */
     resetStars() {
         this.mStars = 3;
         this.notifyStarsObservers(this.mStars);
     }
 
+    /**
+     * Removes a game star 
+     */
     removeStar() {
-        this.mStars--;
+        if (this.mStars != 0) {
+            this.mStars--;
+        }
         this.notifyStarsObservers(this.mStars);
     }
 
+    /**
+     * Adds an observer to be notified of game star update
+     * @param {View} observer 
+     */
     addStarsObserver(observer) {
         this.mStarsObservers.push(observer);
     }
 
+    /**
+     * Notifies all observers of game star update
+     * @param {Number} currentTime 
+     */
     notifyStarsObservers(currentStars) {
-        // TODO implement for each stars updated, update the observers (view)
-        // this.mStarsObservers.forEach();
+        console.log("notifyStarsObservers() called")
+        console.log(`number of observers ${this.mStarsObservers.length}`)
+        this.mStarsObservers.forEach(function (observer) {
+            console.log(`observer notified of time update, current time: ${currentStars} seconds`)
+            observer.showStars(currentStars);
+        });
     }
 
     // Timer
