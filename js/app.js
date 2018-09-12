@@ -206,7 +206,7 @@ class Controller {
 
     /**
      * Checks number of moves to determine whether to deduct stars
-     * @param {*} moves 
+     * @param {Number} moves 
      */
     mapMovesToStars(moves) {
         const TWO_STAR_MOVES = 32;
@@ -290,7 +290,7 @@ class Model {
     }
 
     /**
-     * Removes a game star 
+     * Removes a game star
      */
     removeStar() {
         if (this.mStars != 0) {
