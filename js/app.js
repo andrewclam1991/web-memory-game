@@ -1,393 +1,395 @@
-/**
- * Handles view presentation, delegates user events 
- * to {@link Controller}
- */
-class View {
-    // view references
-    constructor() {
-        this.mResetButton = document.getElementById("restart-view");
-        this.mElapsedTimeTextView = document.getElementById("elapsed-time-view");
-        this.mFirstStarView = document.getElementById("first-star-view");
-        this.mSecondStarView = document.getElementById("second-star-view");
-        this.mThirdStarView = document.getElementById("third-star-view");
-        this.mCardViews = document.getElementsByClassName("card-view");
-        this.mDeckView = document.getElementById('main-deck');
-    }
+import View from './view';
 
-    /**
-     * Main method of execution
-     */
-    main() {
-        const mController = new Controller(this);
+// /**
+//  * Handles view presentation, delegates user events 
+//  * to {@link Controller}
+//  */
+// class View {
+//     // view references
+//     constructor() {
+//         this.mResetButton = document.getElementById("restart-view");
+//         this.mElapsedTimeTextView = document.getElementById("elapsed-time-view");
+//         this.mFirstStarView = document.getElementById("first-star-view");
+//         this.mSecondStarView = document.getElementById("second-star-view");
+//         this.mThirdStarView = document.getElementById("third-star-view");
+//         this.mCardViews = document.getElementsByClassName("card-view");
+//         this.mDeckView = document.getElementById('main-deck');
+//     }
 
-        // start the game
-        mController.handleStartGame();
+//     /**
+//      * Main method of execution
+//      */
+//     main() {
+//         const mController = new Controller(this);
 
-        // allow user to restart game
-        this.mResetButton.addEventListener('click', function () {
-            mController.handleRestartGame()
-        });
+//         // start the game
+//         mController.handleStartGame();
 
-        // handles user click on a card
-        this.mDeckView.addEventListener('click', function (event) {
-            mController.handleOnCardClicked(event)
-        });
+//         // allow user to restart game
+//         this.mResetButton.addEventListener('click', function () {
+//             mController.handleRestartGame()
+//         });
 
-        console.log("main() started");
-    }
+//         // handles user click on a card
+//         this.mDeckView.addEventListener('click', function (event) {
+//             mController.handleOnCardClicked(event)
+//         });
 
-    /**
-     * Sets a card's content by its index
-     * @param {Number} index index of the card in the cardViews
-     * @param {String} content html content  
-     */
-    setCardContentByIndex(index, content) {
-        console.log(`setCardContentByIndex called to update card content at index ${index} with ${content}`)
-        this.mCardViews[index].appendChild(content);
-    }
+//         console.log("main() started");
+//     }
 
-    /**
-     * Gets a card's content by its index
-     * @param {Number} index index of the card in the cardViews
-     */
-    getCardContentByIndex(index) {
-        return this.mCardViews[index].getElementsByTagName("i")[0];
-    }
+//     /**
+//      * Sets a card's content by its index
+//      * @param {Number} index index of the card in the cardViews
+//      * @param {String} content html content  
+//      */
+//     setCardContentByIndex(index, content) {
+//         console.log(`setCardContentByIndex called to update card content at index ${index} with ${content}`)
+//         this.mCardViews[index].appendChild(content);
+//     }
 
-    /**
-     * Sets a card's visibility
-     * @param {Node} cardView
-     * @param {Boolean} isVisible flags whether this card is visible
-     */
-    setCardVisibility(cardView, isVisible) {
-        console.log(`show the ${cardView.classList}? ${isVisible}`)
-        if (isVisible) {
-            cardView.classList.add("open");
-            cardView.classList.add("show");
-        } else {
-            cardView.classList.remove("open");
-            cardView.classList.remove("show");
-        }
-    }
+//     /**
+//      * Gets a card's content by its index
+//      * @param {Number} index index of the card in the cardViews
+//      */
+//     getCardContentByIndex(index) {
+//         return this.mCardViews[index].getElementsByTagName("i")[0];
+//     }
 
-    setCardMatched(cardView, isMatched) {
-        console.log(`show the ${cardView.classList} as matched? ${isMatched}`)
-        if (isMatched) {
-            cardView.classList.add('match');
-        } else {
-            cardView.classList.remove('match');
-        }
-    }
+//     /**
+//      * Sets a card's visibility
+//      * @param {Node} cardView
+//      * @param {Boolean} isVisible flags whether this card is visible
+//      */
+//     setCardVisibility(cardView, isVisible) {
+//         console.log(`show the ${cardView.classList}? ${isVisible}`)
+//         if (isVisible) {
+//             cardView.classList.add("open");
+//             cardView.classList.add("show");
+//         } else {
+//             cardView.classList.remove("open");
+//             cardView.classList.remove("show");
+//         }
+//     }
 
-    /**
-     * Set's a card's visibility base on its index in the collection
-     * @param {Number} index of the card in the cards collection
-     * @param {Boolean} inVisible flags whether the card is visible
-     */
-    setCardVisibilityByIndex(index, inVisible) {
-        console.log(`set visibility at index: ${index}`);
-        const cardView = this.mCardViews[index];
-        this.setCardVisibility(cardView, inVisible);
-    }
+//     setCardMatched(cardView, isMatched) {
+//         console.log(`show the ${cardView.classList} as matched? ${isMatched}`)
+//         if (isMatched) {
+//             cardView.classList.add('match');
+//         } else {
+//             cardView.classList.remove('match');
+//         }
+//     }
 
-    /**
-     * Sets the game's elapsed time since the start
-     * @param {Number} seconds current game's elapsed time in seconds
-     */
-    showElapsedTime(seconds) {
-        console.log(`showing elapsed time: ${seconds} seconds`);
-        this.mElapsedTimeTextView.innerText = seconds;
-    }
+//     /**
+//      * Set's a card's visibility base on its index in the collection
+//      * @param {Number} index of the card in the cards collection
+//      * @param {Boolean} inVisible flags whether the card is visible
+//      */
+//     setCardVisibilityByIndex(index, inVisible) {
+//         console.log(`set visibility at index: ${index}`);
+//         const cardView = this.mCardViews[index];
+//         this.setCardVisibility(cardView, inVisible);
+//     }
 
-    /**
-     * Shows current player's star rating per game
-     * @param {Number} stars rates the player, the more the better.
-     */
-    showStars(stars) {
-        console.log(`showing game stars: ${stars}`);
-        this.mFirstStarView.style.visibility = stars >= 1? "visible" : "hidden";
-        this.mSecondStarView.style.visibility = stars >= 2? "visible" : "hidden";
-        this.mThirdStarView.style.visibility = stars >= 3? "visible" : "hidden";
-    }
+//     /**
+//      * Sets the game's elapsed time since the start
+//      * @param {Number} seconds current game's elapsed time in seconds
+//      */
+//     showElapsedTime(seconds) {
+//         console.log(`showing elapsed time: ${seconds} seconds`);
+//         this.mElapsedTimeTextView.innerText = seconds;
+//     }
 
-}
+//     /**
+//      * Shows current player's star rating per game
+//      * @param {Number} stars rates the player, the more the better.
+//      */
+//     showStars(stars) {
+//         console.log(`showing game stars: ${stars}`);
+//         this.mFirstStarView.style.visibility = stars >= 1? "visible" : "hidden";
+//         this.mSecondStarView.style.visibility = stars >= 2? "visible" : "hidden";
+//         this.mThirdStarView.style.visibility = stars >= 3? "visible" : "hidden";
+//     }
 
-/**
- * Handles user events from {@link View} class
- * and modifies {@link Model} states and data
- */
-class Controller {
+// }
 
-    /**
-     * Constructs a Controller for the parameter view
-     * @param {View} view 
-     */
-    constructor(view) {
-        this.mView = view;
-        this.mModel = new Model(view);
-    }
+// /**
+//  * Handles user events from {@link View} class
+//  * and modifies {@link Model} states and data
+//  */
+// class Controller {
 
-    /**
-     * Starts the game
-     */
-    handleStartGame() {
-        // shuffles the cards
-        this.handleShuffleCards();
-        // resets the moves.
-        this.mModel.resetMoves();
-        // resets the stars
-        this.mModel.resetStars();
-        // resets the timer
-        this.mModel.resetTimer();
-        // start the timer
-        this.mModel.startTimer();
-    }
+//     /**
+//      * Constructs a Controller for the parameter view
+//      * @param {View} view 
+//      */
+//     constructor(view) {
+//         this.mView = view;
+//         this.mModel = new Model(view);
+//     }
 
-    /**
-     * Restarts the game
-     */
-    handleRestartGame() {
-        this.mModel.stopTimer();
-        this.mView.main();
-    }
+//     /**
+//      * Starts the game
+//      */
+//     handleStartGame() {
+//         // shuffles the cards
+//         this.handleShuffleCards();
+//         // resets the moves.
+//         this.mModel.resetMoves();
+//         // resets the stars
+//         this.mModel.resetStars();
+//         // resets the timer
+//         this.mModel.resetTimer();
+//         // start the timer
+//         this.mModel.startTimer();
+//     }
 
-    /**
-     * Shuffes the cards
-     */
-    handleShuffleCards() {
-        // Creates a list to store each cards' content
-        let cardContentArray = new Array();
-        for (let i = 0; i < this.mView.mCardViews.length; i++) {
-            let cardContent = this.mView.getCardContentByIndex(i);
-            cardContentArray.push(cardContent);
-        }
+//     /**
+//      * Restarts the game
+//      */
+//     handleRestartGame() {
+//         this.mModel.stopTimer();
+//         this.mView.main();
+//     }
 
-        // Notifies the view to update the card positions
-        cardContentArray = shuffleCards(cardContentArray);
-        function shuffleCards(array) {
-            let currentIndex = array.length;
-            let temporaryValue, randomIndex;
+//     /**
+//      * Shuffes the cards
+//      */
+//     handleShuffleCards() {
+//         // Creates a list to store each cards' content
+//         let cardContentArray = new Array();
+//         for (let i = 0; i < this.mView.mCardViews.length; i++) {
+//             let cardContent = this.mView.getCardContentByIndex(i);
+//             cardContentArray.push(cardContent);
+//         }
 
-            while (currentIndex !== 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex -= 1;
-                temporaryValue = array[currentIndex];
-                array[currentIndex] = array[randomIndex];
-                array[randomIndex] = temporaryValue;
-            }
-            return array;
-        }
+//         // Notifies the view to update the card positions
+//         cardContentArray = shuffleCards(cardContentArray);
+//         function shuffleCards(array) {
+//             let currentIndex = array.length;
+//             let temporaryValue, randomIndex;
 
-        for (let j = 0; j < this.mView.mCardViews.length; j++) {
-            this.mView.setCardContentByIndex(j, cardContentArray[j]);
-            this.mView.setCardVisibilityByIndex(j, false);
-        }
-    }
+//             while (currentIndex !== 0) {
+//                 randomIndex = Math.floor(Math.random() * currentIndex);
+//                 currentIndex -= 1;
+//                 temporaryValue = array[currentIndex];
+//                 array[currentIndex] = array[randomIndex];
+//                 array[randomIndex] = temporaryValue;
+//             }
+//             return array;
+//         }
 
-    /**
-     * Handle on card clicked
-     */
-    handleOnCardClicked(event) {
-        const card = event.target;
-        // skip and return if event target is not li or 
-        // if it is already open
-        // if it is already matched
-        if (card.nodeName.toLowerCase() !== 'li' ||
-            this.mModel.mOpenCards.includes(card) ||
-            this.mModel.mMatchedCards.includes(card)) {
-            return;
-        }
+//         for (let j = 0; j < this.mView.mCardViews.length; j++) {
+//             this.mView.setCardContentByIndex(j, cardContentArray[j]);
+//             this.mView.setCardVisibilityByIndex(j, false);
+//         }
+//     }
 
-        this.mView.setCardVisibility(card, true);
+//     /**
+//      * Handle on card clicked
+//      */
+//     handleOnCardClicked(event) {
+//         const card = event.target;
+//         // skip and return if event target is not li or 
+//         // if it is already open
+//         // if it is already matched
+//         if (card.nodeName.toLowerCase() !== 'li' ||
+//             this.mModel.mOpenCards.includes(card) ||
+//             this.mModel.mMatchedCards.includes(card)) {
+//             return;
+//         }
 
-        // add move, and then check resulting moves
-        this.mapMovesToStars(this.mModel.addMove());
-    }
+//         this.mView.setCardVisibility(card, true);
 
-    /**
-     * Checks number of moves to determine whether to deduct stars
-     * @param {Number} moves 
-     */
-    mapMovesToStars(moves) {
-        const TWO_STAR_MOVES = 32;
-        const ONE_STAR_MOVES = 64;
-        const ZERO_STAR_MOVES = 96;
+//         // add move, and then check resulting moves
+//         this.mapMovesToStars(this.mModel.addMove());
+//     }
 
-        console.log(`current moves: ${moves}`);
-        switch (moves) {
-            case TWO_STAR_MOVES:
-            case ONE_STAR_MOVES:
-            case ZERO_STAR_MOVES:
-                this.mModel.removeStar();
-                break;
-        }
-    }
+//     /**
+//      * Checks number of moves to determine whether to deduct stars
+//      * @param {Number} moves 
+//      */
+//     mapMovesToStars(moves) {
+//         const TWO_STAR_MOVES = 32;
+//         const ONE_STAR_MOVES = 64;
+//         const ZERO_STAR_MOVES = 96;
 
-}
+//         console.log(`current moves: ${moves}`);
+//         switch (moves) {
+//             case TWO_STAR_MOVES:
+//             case ONE_STAR_MOVES:
+//             case ZERO_STAR_MOVES:
+//                 this.mModel.removeStar();
+//                 break;
+//         }
+//     }
+
+// }
 
 
-/**
- * Holds app states and data, notifies {@link View} class 
- * when app states and data changes.
- */
-class Model {
-    constructor(view) {
-        this.mNumCards = 16;
-        this.mOpenCards = new Array(0);
-        this.mMatchedCards = new Array(0);
-        this.mStars = 3;
-        this.mMoves = 0;
-        this.mElapsedTime = 0;
-        this.mTimerHandle;
+// /**
+//  * Holds app states and data, notifies {@link View} class 
+//  * when app states and data changes.
+//  */
+// class Model {
+//     constructor(view) {
+//         this.mNumCards = 16;
+//         this.mOpenCards = new Array(0);
+//         this.mMatchedCards = new Array(0);
+//         this.mStars = 3;
+//         this.mMoves = 0;
+//         this.mElapsedTime = 0;
+//         this.mTimerHandle;
 
-        this.mMovesObservers = new Array(0);
-        this.mStarsObservers = new Array(0);
-        this.mTimerObservers = new Array(0);
+//         this.mMovesObservers = new Array(0);
+//         this.mStarsObservers = new Array(0);
+//         this.mTimerObservers = new Array(0);
 
-        // Register view observer(s)
-        this.addMovesObserver(view);
-        this.addStarsObserver(view);
-        this.addTimerObserver(view);
-    }
+//         // Register view observer(s)
+//         this.addMovesObserver(view);
+//         this.addStarsObserver(view);
+//         this.addTimerObserver(view);
+//     }
 
-    // Cards
-    clearOpenCards() {
-        this.mOpenCards = new Array(0);
-    }
+//     // Cards
+//     clearOpenCards() {
+//         this.mOpenCards = new Array(0);
+//     }
 
-    clearMatchedCards() {
-        this.mMatchedCards = new Array(0);
-    }
+//     clearMatchedCards() {
+//         this.mMatchedCards = new Array(0);
+//     }
 
-    // Moves
-    resetMoves() {
-        this.mMoves = 0;
-        this.notifyMovesObservers(this.mMoves);
-    }
+//     // Moves
+//     resetMoves() {
+//         this.mMoves = 0;
+//         this.notifyMovesObservers(this.mMoves);
+//     }
 
-    addMove() {
-        this.mMoves++;
-        this.notifyMovesObservers(this.mMoves);
-        return this.mMoves;
-    }
+//     addMove() {
+//         this.mMoves++;
+//         this.notifyMovesObservers(this.mMoves);
+//         return this.mMoves;
+//     }
 
-    addMovesObserver(observer) {
-        this.mMovesObservers.push(observer);
-    }
+//     addMovesObserver(observer) {
+//         this.mMovesObservers.push(observer);
+//     }
 
-    notifyMovesObservers(currentMoves) {
-        // TODO implement for each move updated, update the observers (view)
-        // this.mMovesObservers.forEach();
-    }
+//     notifyMovesObservers(currentMoves) {
+//         // TODO implement for each move updated, update the observers (view)
+//         // this.mMovesObservers.forEach();
+//     }
 
-    // Stars
-    /**
-     * Resets game stars back to default number
-     */
-    resetStars() {
-        this.mStars = 3;
-        this.notifyStarsObservers(this.mStars);
-    }
+//     // Stars
+//     /**
+//      * Resets game stars back to default number
+//      */
+//     resetStars() {
+//         this.mStars = 3;
+//         this.notifyStarsObservers(this.mStars);
+//     }
 
-    /**
-     * Removes a game star
-     */
-    removeStar() {
-        if (this.mStars != 0) {
-            this.mStars--;
-        }
-        this.notifyStarsObservers(this.mStars);
-    }
+//     /**
+//      * Removes a game star
+//      */
+//     removeStar() {
+//         if (this.mStars != 0) {
+//             this.mStars--;
+//         }
+//         this.notifyStarsObservers(this.mStars);
+//     }
 
-    /**
-     * Adds an observer to be notified of game star update
-     * @param {View} observer 
-     */
-    addStarsObserver(observer) {
-        this.mStarsObservers.push(observer);
-    }
+//     /**
+//      * Adds an observer to be notified of game star update
+//      * @param {View} observer 
+//      */
+//     addStarsObserver(observer) {
+//         this.mStarsObservers.push(observer);
+//     }
 
-    /**
-     * Notifies all observers of game star update
-     * @param {Number} currentTime 
-     */
-    notifyStarsObservers(currentStars) {
-        console.log("notifyStarsObservers() called")
-        console.log(`number of observers ${this.mStarsObservers.length}`)
-        this.mStarsObservers.forEach(function (observer) {
-            console.log(`observer notified of time update, current time: ${currentStars} seconds`)
-            observer.showStars(currentStars);
-        });
-    }
+//     /**
+//      * Notifies all observers of game star update
+//      * @param {Number} currentTime 
+//      */
+//     notifyStarsObservers(currentStars) {
+//         console.log("notifyStarsObservers() called")
+//         console.log(`number of observers ${this.mStarsObservers.length}`)
+//         this.mStarsObservers.forEach(function (observer) {
+//             console.log(`observer notified of time update, current time: ${currentStars} seconds`)
+//             observer.showStars(currentStars);
+//         });
+//     }
 
-    // Timer
-    /**
-     * Starts the game timer
-     */
-    startTimer() {
-        console.log("startTimer() called")
-        const model = this;
-        const handler = function () {
-            model.mElapsedTime++;
-            model.notifyTimerObservers(model.mElapsedTime);
-        }
-        this.mElapsedTime = 0;
-        this.mTimerHandle = window.setInterval(handler, 1000);
-    }
+//     // Timer
+//     /**
+//      * Starts the game timer
+//      */
+//     startTimer() {
+//         console.log("startTimer() called")
+//         const model = this;
+//         const handler = function () {
+//             model.mElapsedTime++;
+//             model.notifyTimerObservers(model.mElapsedTime);
+//         }
+//         this.mElapsedTime = 0;
+//         this.mTimerHandle = window.setInterval(handler, 1000);
+//     }
 
-    /**
-     * Stops the game timer.
-     */
-    stopTimer() {
-        console.log(`stopTimer() called, clears timed window interval with handle id: ${this.mTimerHandle}`)
-        window.clearInterval(this.mTimerHandle);
-    }
+//     /**
+//      * Stops the game timer.
+//      */
+//     stopTimer() {
+//         console.log(`stopTimer() called, clears timed window interval with handle id: ${this.mTimerHandle}`)
+//         window.clearInterval(this.mTimerHandle);
+//     }
 
-    /**
-     * Resets the game timer.
-     */
-    resetTimer() {
-        console.log("resetTimer() called, timer instance set back to 0");
-        this.mElapsedTime = 0;
-        this.stopTimer();
-        this.notifyTimerObservers(this.mElapsedTime);
-    }
+//     /**
+//      * Resets the game timer.
+//      */
+//     resetTimer() {
+//         console.log("resetTimer() called, timer instance set back to 0");
+//         this.mElapsedTime = 0;
+//         this.stopTimer();
+//         this.notifyTimerObservers(this.mElapsedTime);
+//     }
 
-    /**
-     * Adds an observer to be notified of game time update
-     * @param {View} observer 
-     */
-    addTimerObserver(observer) {
-        console.log("addTimerObserver() called, an observer is added.")
-        this.mTimerObservers.push(observer);
-    }
+//     /**
+//      * Adds an observer to be notified of game time update
+//      * @param {View} observer 
+//      */
+//     addTimerObserver(observer) {
+//         console.log("addTimerObserver() called, an observer is added.")
+//         this.mTimerObservers.push(observer);
+//     }
 
-    /**
-     * Notifies all observers of game time update
-     * @param {Number} currentTime 
-     */
-    notifyTimerObservers(currentTime) {
-        console.log("notifyTimerObservers() called")
-        console.log(`number of observers ${this.mTimerObservers.length}`)
-        this.mTimerObservers.forEach(function (observer) {
-            console.log(`observer notified of time update, current time: ${currentTime} seconds`)
-            observer.showElapsedTime(currentTime);
-        });
-    }
+//     /**
+//      * Notifies all observers of game time update
+//      * @param {Number} currentTime 
+//      */
+//     notifyTimerObservers(currentTime) {
+//         console.log("notifyTimerObservers() called")
+//         console.log(`number of observers ${this.mTimerObservers.length}`)
+//         this.mTimerObservers.forEach(function (observer) {
+//             console.log(`observer notified of time update, current time: ${currentTime} seconds`)
+//             observer.showElapsedTime(currentTime);
+//         });
+//     }
 
-    /**
-     * Clears all observers from the list
-     */
-    clearTimerObservers() {
-        console.log("clearTimerObservers() called")
-        delete this.mTimerObservers;
-        this.mTimerObservers = new Array(0);
-    }
+//     /**
+//      * Clears all observers from the list
+//      */
+//     clearTimerObservers() {
+//         console.log("clearTimerObservers() called")
+//         delete this.mTimerObservers;
+//         this.mTimerObservers = new Array(0);
+//     }
 
-}
+// }
 
 /** Execution Block */
-let mView = new View();
+let mView = new View(document);
 mView.main();
 
 

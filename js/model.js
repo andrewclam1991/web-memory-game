@@ -51,8 +51,10 @@ export default class Model {
   }
 
   notifyMovesObservers(currentMoves) {
-      // TODO implement for each move updated, update the observers (view)
-      // this.mMovesObservers.forEach();
+      this.mMovesObservers.forEach(function (observer) {
+        console.log(`observer notified of time update, current time: ${currentStars} seconds`)
+        observer.showMoves(currentMoves);
+    })
   }
 
   // Stars

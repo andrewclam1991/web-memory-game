@@ -14,6 +14,7 @@ export default class View {
       this.mThirdStarView = document.getElementById("third-star-view");
       this.mCardViews = document.getElementsByClassName("card-view");
       this.mDeckView = document.getElementById('main-deck');
+      this.mMovesView = document.getElementById('moves-view');
   }
 
   /**
@@ -110,6 +111,15 @@ export default class View {
       this.mFirstStarView.style.visibility = stars >= 1? "visible" : "hidden";
       this.mSecondStarView.style.visibility = stars >= 2? "visible" : "hidden";
       this.mThirdStarView.style.visibility = stars >= 3? "visible" : "hidden";
+  }
+
+  /**
+   * Shows current game's total moves
+   * @param {Number} moves 
+   */
+  showMoves(moves){
+      console.log(`showing game moves: ${moves}`);
+      this.mMovesView.innerText = moves;
   }
 
 }
