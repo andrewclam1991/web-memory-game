@@ -386,9 +386,8 @@ class Model {
 
 }
 
-
 /** Execution Block */
-const mView = new View();
+let mView = new View();
 mView.main();
 
 
