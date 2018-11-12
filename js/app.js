@@ -275,16 +275,15 @@ class Controller {
  * changes.
  */
 class Model {
-
-    // app constants
-    DEFAULT_NUM_STARS = 3;
-    WINNING_MATCHED_CARDS = 16;
-
     /**
      * Constructs and initializes a Model class
      * @param {Observer} view 
      */
     constructor(view) {
+        // class constants
+        this.DEFAULT_NUM_STARS = 3;
+        this.WINNING_MATCHED_CARDS = 16;
+
         this.mView = view;
         this.mOpenCards = [];
         this.mMatchedCards = [];
