@@ -1,6 +1,6 @@
 /**
  * Global interval id 
- * Usued specifically for the clearing timer interval
+ * Used specifically for the clearing timer interval
  * TODO fix this
  */
 let mTimerIntervalId
@@ -10,6 +10,7 @@ let mTimerIntervalId
  * events to {@link Controller}
  */
 class View {
+
     // view references
     constructor(document) {
         this.mResetButton = document.getElementById("restart-view");
@@ -77,20 +78,6 @@ class View {
         } else {
             cardView.classList.remove("open");
             cardView.classList.remove("show");
-        }
-    }
-
-    /**
-     * Sets whether the card is matched
-     * @param {Node} cardView a particular card in view
-     * @param {Booelan} isMatched flags whether this card is matched
-     */
-    setCardMatched(cardView, isMatched) {
-        console.log(`show the ${cardView.classList} as matched? ${isMatched}`)
-        if (isMatched) {
-            cardView.classList.add('match');
-        } else {
-            cardView.classList.remove('match');
         }
     }
 
@@ -237,11 +224,11 @@ class Controller {
             return;
         }
 
-        // add card to the list of open cards
-        this.mModel.addCardToOpenCards(card);
-
         // add move, and then check resulting moves
         this.checkStars(this.mModel.addMove());
+
+        // add card to the list of open cards
+        this.mModel.addCardToOpenCards(card);
     }
 
     /**
@@ -289,6 +276,7 @@ class Controller {
  */
 class Model {
 
+    // app constants
     DEFAULT_NUM_STARS = 3;
     WINNING_MATCHED_CARDS = 16;
 
@@ -317,6 +305,8 @@ class Model {
         this.resetMoves();
         this.resetStars();
         this.resetTimer();
+
+        this.isInputEnabled = true;
     }
 
     // Cards
@@ -329,17 +319,32 @@ class Model {
     }
 
     /**
+     * add card to the list of open cards, for comparison
+     * Note: there can only be 2 cards open at a time, ignore 
+     * add card request during compare
      * 
-     * Note: there can only be 2 cards open at a time
-     * @param {Node} card the card to be added to the list of open cards 
+     * @param {Node} card to be added to the list of open cards 
      */
     addCardToOpenCards(card) {
+        if (!this.isInputEnabled){
+            return;
+        }
+
         console.log(`card ${card} added to the list of open cards.`)
         this.mOpenCards.push(card);
         this.mView.setCardVisibility(card, true);
 
+        async function waitAsync(ms) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve("delay done!"), ms)
+            });
+        }
+
         if (this.mOpenCards.length == 2) {
-            // okay, now is time to compare first and second card
+            // disable user input during comparison
+            this.isInputEnabled = false;
+
+            // it is time to compare first and second card
             let cardA = this.mOpenCards.pop();
             let cardB = this.mOpenCards.pop();
 
@@ -347,11 +352,15 @@ class Model {
                 console.log(`card matches: card A ${cardA}, card B ${cardB}`)
                 this.addCardToMatchedCards(cardA)
                 this.addCardToMatchedCards(cardB)
+                this.isInputEnabled = true;
             } else {
-                // cards don't match
                 console.log(`card mismatch: card A ${cardA}, card B ${cardB}`)
-                this.removeCardFromOpenCards(cardA)
-                this.removeCardFromOpenCards(cardB)
+                waitAsync(1000).then(r => {
+                    console.log(r);
+                    this.mView.setCardVisibility(cardA, false);
+                    this.mView.setCardVisibility(cardB, false);
+                    this.isInputEnabled = true;
+                }); 
             }
 
             // after comparison, clear the array
@@ -360,24 +369,17 @@ class Model {
     }
 
     /**
-     * 
-     * @param {*} card 
-     */
-    removeCardFromOpenCards(card) {
-        console.log(`card ${card} removed from the list of open cards.`)
-        this.mView.setCardVisibility(card, false);
-    }
-
-    /**
-     * 
-     * @param {*} card 
+     * add the card to the list of matched card
+     * Note: there can only be as many card as WINNING_MATCHED_CARDS
+     * @param {Node} card to be added to the list of matched cards
      */
     addCardToMatchedCards(card) {
         console.log(`card ${card} added to the list of matched cards.`)
         this.mMatchedCards.push(card)
         if (this.mMatchedCards.length == this.WINNING_MATCHED_CARDS) {
-            // TODO show winning modal and stop the timer
             this.stopTimer();
+            this.mView.showGameWonModal();
+            this.clearMatchedCards()
         }
     }
 
@@ -388,6 +390,9 @@ class Model {
     }
 
     addMove() {
+        if (!this.isInputEnabled){
+            return;
+        }
         this.mMoves++;
         this.notifyMovesObservers(this.mMoves);
         return this.mMoves;
@@ -450,7 +455,6 @@ class Model {
      */
     notifyStarsObservers(currentStars) {
         console.log("notifyStarsObservers() called")
-        console.log(`number of observers ${this.mStarsObservers.length}`)
         this.mStarsObservers.forEach(function (observer) {
             console.log(`observer notified of time update, current time: ${currentStars} seconds`)
             observer.showStars(currentStars);
@@ -488,7 +492,7 @@ class Model {
      */
     resetTimer() {
         this.stopTimer();
-        console.log("restartTimer() called, timer instance set back to 0");
+        console.log("resetTimer() called, timer instance restarts from 0.");
         this.mElapsedTime = 0;
         this.notifyTimerObservers(this.mElapsedTime);
         const handler = function () {
@@ -514,7 +518,6 @@ class Model {
      */
     notifyTimerObservers(currentTime) {
         console.log("notifyTimerObservers() called")
-        console.log(`number of observers ${this.mTimerObservers.size}`)
         this.mTimerObservers.forEach(function (observer) {
             console.log(`observer notified of time update, current time: ${currentTime} seconds`)
             observer.showElapsedTime(currentTime);
@@ -531,6 +534,6 @@ class Model {
 
 }
 
-/** Execution Block */
+/** Main Block */
 let mView = new View(document);
 mView.start();
