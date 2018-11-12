@@ -539,4 +539,4 @@ let mView = new View(document);
 mView.start();
 
 /** debug only */
-mView.showGameWonModal()
+// mView.showGameWonModal()
