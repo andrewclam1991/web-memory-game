@@ -125,9 +125,9 @@ class View {
      * Shows the play has won the game
      */
     showGameWonModal() {
-        let modalView = document.getElementById("modal-game-win-view");
+        let modalView = document.getElementById("modal-container-view");
         let modalCloseBtn = document.getElementById("modal-close-btn");
-        modalView.style.display = "block";
+        modalView.style.display = "flex";
 
         // Allows user to dimiss the modal message
         modalCloseBtn.onclick = function () {
@@ -537,3 +537,6 @@ class Model {
 /** Main Block */
 let mView = new View(document);
 mView.start();
+
+/** debug only */
+mView.showGameWonModal()
