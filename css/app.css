@@ -86,13 +86,21 @@ h1 {
  */
 
 .score-panel-view {
-    text-align: left;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
     width: 345px;
     margin-bottom: 10px;
 }
 
+.score-panel-view span{
+    margin: auto;
+}
+
 .score-panel-view .stars {
-    margin: 0;
+    margin: auto;
     padding: 0;
     display: inline-block;
     margin: 0 5px 0 0;
@@ -107,48 +115,63 @@ h1 {
     visibility: hidden;
 }
 
-.score-panel-view .restart-view {
+.score-panel-view #restart-view {
+    margin: auto;
     float: right;
     cursor: pointer;
 }
 
-/* Modal - Box 
+/* Modal 
    Defines the style of overlay box that show
    user messages. Hidden by default unless triggered 
  */
-.modal-view {
-    display: none;
-    position: fixed; 
+#modal-container-view {
+    display: none; /*toggles to flex for visible*/
+    position: fixed;
+    align-items: center;
     z-index: 1;
-    padding-top: 100px;
     left: 0;
     top: 0;
     width: 100%; 
     height: 100%;
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
     background-color: rgba(0,0,0,0.4); /* Opacity at 40% */
 }
 
-/* Modal - Content */
+/* Modal box */
 #modal-content-view {
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
     background-color: #fefefe;
     margin: auto;
-    padding: 20px;
+    padding: 8px;
     border: 1px solid #888;
-    width: 80%;
+    width: 50%;
+    min-width: 345px;
+}
+
+/* Modal message */
+#modal-content-view p {
+    margin: auto;
+    padding: 8px;
+    order: 0;
+    flex-grow: 1;
 }
 
 /* Modal - Close Button */
 #modal-close-btn {
+    order :1;
     color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+    margin: auto;
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 48px;
 }
 
-#close-close-btn:hover,
-#close-close-btn:focus {
+#modal-close-btn:hover,
+#modal-close-btn:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;

@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Matching Game</title>
@@ -8,6 +9,7 @@
     <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Coda">
     <link rel="stylesheet" href="css/app.css">
 </head>
+
 <body>
 
     <div class="container">
@@ -16,19 +18,19 @@
         </header>
 
         <section class="score-panel-view">
-        	<ul class="stars">
-        		<li><i class="fa fa-star" id="first-star-view"></i></li>
-        		<li><i class="fa fa-star" id="second-star-view"></i></li>
-        		<li><i class="fa fa-star" id="third-star-view"></i></li>
-        	</ul>
+            <ul class="stars">
+                <li><i class="fa fa-star" id="first-star-view"></i></li>
+                <li><i class="fa fa-star" id="second-star-view"></i></li>
+                <li><i class="fa fa-star" id="third-star-view"></i></li>
+            </ul>
 
             <span id="moves-view">0</span> Moves
-            
+
             <span id="elapsed-time-view">0</span> seconds elapsed
 
-            <div id="restart-view">
-        		<i class="fa fa-repeat"></i>
-        	</div>
+            <span id="restart-view">
+                <i class="fa fa-repeat"></i>
+            </span>
         </section>
 
         <ul class="deck-view" id="main-deck">
@@ -83,18 +85,16 @@
         </ul>
     </div>
 
-    <!-- The Modal -->
-    <div id="modal-game-win-view" class="modal-view">
+    <!-- The Modal Box-->
+    <div id="modal-container-view">
         <!-- Modal content -->
-        <div class="modal-content-view">
-        <span class="modal-close-btn">&times;</span>
-        <p>You've won the game!</p>
+        <div id="modal-content-view">
+            <p>You've won the game!</p>
+            <span id="modal-close-btn">&times;</span>
         </div>
-  </div>
+    </div>
 
-    <script type="module" src="js/app.js"></script>
-    <!-- <script src="js/view.js" type="module" ></script>
-    <script src="js/controller.js" type="module"></script>
-    <script src="js/model.js" type="module" ></script> -->
+    <script src="js/app.js"></script>
 </body>
+
 </html>
