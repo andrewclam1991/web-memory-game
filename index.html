@@ -24,9 +24,9 @@
                 <li><i class="fa fa-star" id="third-star-view"></i></li>
             </ul>
 
-            <span id="moves-view">0</span> Moves
+            <span><span id="moves-view">0</span> Moves</span>
 
-            <span id="elapsed-time-view">0</span> seconds elapsed
+            <span id="elapsed-time-view">00:00:00</span>
 
             <span id="restart-view">
                 <i class="fa fa-repeat"></i>
@@ -91,6 +91,16 @@
         <div id="modal-content-view">
             <p>You've won the game!</p>
             <span id="modal-close-btn">&times;</span>
+        </div>
+
+        <div>
+            <span class="modal-stat-title">FINISHED TIME</span>
+            <i id="modal-finish-time-text-view">hh:mm:ss</i>
+        </div>
+
+        <div>
+            <span class="modal-stat-title">TOTAL MOVES</span>
+            <span id="modal-finish-moves-text-view">-1</span>
         </div>
     </div>
 

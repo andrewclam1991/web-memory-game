@@ -98,7 +98,7 @@ class View {
      */
     showElapsedTime(seconds) {
         console.log(`showing elapsed time: ${seconds} seconds`);
-        this.mElapsedTimeTextView.innerText = seconds;
+        this.mElapsedTimeTextView.innerText = formatTime(seconds);
     }
 
     /**
@@ -122,12 +122,20 @@ class View {
     }
 
     /**
-     * Shows the play has won the game
+     * Shows the player has won the game
+     * @param {Number} finishTime the amount of time to finish, in seconds
+     * @param {Number} moves the number of moves it took
      */
-    showGameWonModal() {
+    showGameWonModal(finishTime, moves) {
         let modalView = document.getElementById("modal-container-view");
+        let finishTimeView = document.getElementById("modal-finish-time-text-view");
+        let finishMovesView = document.getElementById("modal-finish-moves-text-view");
         let modalCloseBtn = document.getElementById("modal-close-btn");
         modalView.style.display = "flex";
+
+        // Shows user the amount of time it took to win the game
+        finishTimeView.innerText = formatTime(finishTime);
+        finishMovesView.innerText = moves;
 
         // Allows user to dimiss the modal message
         modalCloseBtn.onclick = function () {
@@ -305,14 +313,20 @@ class Model {
         this.resetStars();
         this.resetTimer();
 
+        // initialize to allow input
         this.isInputEnabled = true;
     }
 
-    // Cards
+    /**
+     * Resets and clears the list of open cards
+     */
     clearOpenCards() {
         this.mOpenCards = [];
     }
 
+    /**
+     * Resets and clears the list of matched cards
+     */
     clearMatchedCards() {
         this.mMatchedCards = [];
     }
@@ -343,17 +357,18 @@ class Model {
             // disable user input during comparison
             this.isInputEnabled = false;
 
-            // it is time to compare first and second card
+            // get the first and second card
             let cardA = this.mOpenCards.pop();
             let cardB = this.mOpenCards.pop();
 
+            // compare these cards
             if (cardA.isEqualNode(cardB)) {
-                console.log(`card matches: card A ${cardA}, card B ${cardB}`)
+                console.log(`cards match: card A ${cardA}, card B ${cardB}`)
                 this.addCardToMatchedCards(cardA)
                 this.addCardToMatchedCards(cardB)
                 this.isInputEnabled = true;
             } else {
-                console.log(`card mismatch: card A ${cardA}, card B ${cardB}`)
+                console.log(`cards mismatch: card A ${cardA}, card B ${cardB}`)
                 waitAsync(1000).then(r => {
                     console.log(r);
                     this.mView.setCardVisibility(cardA, false);
@@ -368,7 +383,7 @@ class Model {
     }
 
     /**
-     * add the card to the list of matched card
+     * Adds a card to the list of matched card
      * Note: there can only be as many card as WINNING_MATCHED_CARDS
      * @param {Node} card to be added to the list of matched cards
      */
@@ -377,17 +392,22 @@ class Model {
         this.mMatchedCards.push(card)
         if (this.mMatchedCards.length == this.WINNING_MATCHED_CARDS) {
             this.stopTimer();
-            this.mView.showGameWonModal();
+            this.mView.showGameWonModal(this.mElapsedTime, this.mMoves);
             this.clearMatchedCards()
         }
     }
 
-    // Moves
+    /**
+     * Resets the games move back to zero
+     */
     resetMoves() {
         this.mMoves = 0;
         this.notifyMovesObservers(this.mMoves);
     }
 
+    /**
+     * Adds a move
+     */
     addMove() {
         if (!this.isInputEnabled){
             return;
@@ -397,6 +417,10 @@ class Model {
         return this.mMoves;
     }
 
+    /**
+     * Adds an observer to the moves
+     * @param {*} observer 
+     */
     addMovesObserver(observer) {
         this.mMovesObservers.add(observer);
     }
@@ -461,7 +485,7 @@ class Model {
     }
 
     /**
-     * Clears all observers from the list
+     * Clears all stars observers from the list
      */
     clearStarsObservers() {
         console.log("clearStarsObservers() called")
@@ -538,4 +562,27 @@ let mView = new View(document);
 mView.start();
 
 /** debug only */
-// mView.showGameWonModal()
+mView.showGameWonModal(111,23)
+
+
+/**
+ * static helper method to format seconds into 
+ * readable time
+ * @param {Number} seconds the time lapsed in seconds 
+ */
+function formatTime(seconds){
+    hh = Math.floor(seconds / 3600);
+    seconds = seconds % 3600;
+    mm = Math.floor(seconds / 60);
+    ss = seconds % 60;
+    if (hh < 10){
+        hh = "0" + hh
+    }
+    if (mm < 10){
+        mm = "0" + mm
+    }
+    if (ss < 10){
+        ss = "0" + ss
+    }
+    return `${hh}:${mm}:${ss}`;
+}
