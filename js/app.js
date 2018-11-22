@@ -43,7 +43,6 @@ class View {
             console.log('card clicked');
             mController.handleOnCardClicked(event)
         });
-
         console.log("game started");
     }
 
@@ -78,6 +77,7 @@ class View {
         } else {
             cardView.classList.remove("open");
             cardView.classList.remove("show");
+            this.setCardMatched(cardView, false);
         }
     }
 
@@ -90,6 +90,19 @@ class View {
         console.log(`set visibility at index: ${index}`);
         const cardView = this.mCardViews[index];
         this.setCardVisibility(cardView, inVisible);
+    }
+
+    /**
+     * Set's a card to be matched
+     * @param {Card} cardView 
+     */
+    setCardMatched(cardView, isMatched){
+        console.log(`show the ${cardView} as matched? ${isMatched}`)
+        if (isMatched){
+            cardView.classList.add("match");
+        }else{
+            cardView.classList.remove("match");
+        }
     }
 
     /**
@@ -389,7 +402,8 @@ class Model {
      */
     addCardToMatchedCards(card) {
         console.log(`card ${card} added to the list of matched cards.`)
-        this.mMatchedCards.push(card)
+        this.mMatchedCards.push(card);
+        this.mView.setCardMatched(card, true);
         if (this.mMatchedCards.length == this.WINNING_MATCHED_CARDS) {
             this.stopTimer();
             this.mView.showGameWonModal(this.mElapsedTime, this.mMoves);
@@ -564,7 +578,6 @@ mView.start();
 /** debug only */
 mView.showGameWonModal(111,23)
 
-
 /**
  * static helper method to format seconds into 
  * readable time
@@ -572,17 +585,17 @@ mView.showGameWonModal(111,23)
  */
 function formatTime(seconds){
     hh = Math.floor(seconds / 3600);
-    seconds = seconds % 3600;
-    mm = Math.floor(seconds / 60);
-    ss = seconds % 60;
+    seconds = seconds % 3600; 
+    mm = Math.floor(seconds / 60); 
+    ss = seconds % 60; 
     if (hh < 10){
-        hh = "0" + hh
+        hh = '0' + hh
     }
     if (mm < 10){
-        mm = "0" + mm
+        mm = '0' + mm
     }
     if (ss < 10){
-        ss = "0" + ss
+        ss = '0' + ss
     }
     return `${hh}:${mm}:${ss}`;
 }

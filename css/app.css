@@ -128,7 +128,6 @@ h1 {
 #modal-container-view {
     display: none; /*toggles to flex for visible*/
     position: fixed;
-    align-items: center;
     z-index: 1;
     left: 0;
     top: 0;
@@ -137,11 +136,10 @@ h1 {
     background-color: rgba(0,0,0,0.4); /* Opacity at 40% */
 }
 
-/* Modal box */
 #modal-content-view {
     display:flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
     background-color: #fefefe;
@@ -152,22 +150,33 @@ h1 {
     min-width: 345px;
 }
 
-/* Modal message */
-#modal-content-view p {
-    margin: auto;
-    padding: 8px;
-    order: 0;
-    flex-grow: 1;
+/* We tell all items to be 100% width, via flex-basis */
+#modal-content-view > * {
+    flex: 1 100%;
 }
 
-/* Modal - Close Button */
+/* Modal title */
+#modal-title {
+    margin: auto;
+    padding: 8px;
+    text-align: center;
+    order: 0;
+}
+
+/* Modal title close Button */
 #modal-close-btn {
-    order :1;
+    order: 99;
     color: #aaaaaa;
     margin: auto;
     min-width: 48px;
     min-height: 48px;
     font-size: 48px;
+}
+
+/* Modal content stat title*/
+#modal-container-view .modal-stat-title {
+    margin: auto;
+    padding: 8px;
 }
 
 #modal-close-btn:hover,
